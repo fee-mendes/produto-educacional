@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O Gomoku Narabe — Go e Gomoku Narabe na escola</title>
+  <meta name="description" content="O Gomoku Narabe é um jogo japonês onde vence quem alinhar cinco peças em fila. Conheça suas regras, sua origem e seu papel pedagógico.">
+  <meta name="theme-color" content="#c8102e">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='14' fill='%23dcb35c'/%3E%3Cg stroke='%231a1a1a' stroke-width='3' fill='none'%3E%3Cline x1='20' y1='20' x2='80' y2='20'/%3E%3Cline x1='20' y1='50' x2='80' y2='50'/%3E%3Cline x1='20' y1='80' x2='80' y2='80'/%3E%3Cline x1='20' y1='20' x2='20' y2='80'/%3E%3Cline x1='50' y1='20' x2='50' y2='80'/%3E%3Cline x1='80' y1='20' x2='80' y2='80'/%3E%3C/g%3E%3Ccircle cx='35' cy='65' r='12' fill='%231a1a1a'/%3E%3Ccircle cx='65' cy='35' r='12' fill='%23fafafa' stroke='%231a1a1a' stroke-width='2'/%3E%3C/svg%3E">
+</head>
+<body>
+  <a href="#main" class="skip-link">Pular para o conteúdo principal</a>
+
+  <div vw class="enabled" aria-label="Tradutor automático para Libras">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div>
+  </div>
+
+  <div class="a11y-bar" role="region" aria-label="Controles de acessibilidade">
+    <div class="a11y-bar__inner">
+      <div class="a11y-bar__group">
+        <span class="a11y-bar__label" id="lbl-fonte">Tamanho do texto:</span>
+        <div role="group" aria-labelledby="lbl-fonte">
+          <button type="button" class="a11y-btn" data-fontset="0.9" aria-pressed="false" aria-label="Tamanho do texto pequeno"><span class="a11y-icon" aria-hidden="true">A−</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1" aria-pressed="true" aria-label="Tamanho do texto padrão"><span class="a11y-icon" aria-hidden="true">A</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1.2" aria-pressed="false" aria-label="Tamanho do texto grande"><span class="a11y-icon" aria-hidden="true">A+</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1.4" aria-pressed="false" aria-label="Tamanho do texto extragrande"><span class="a11y-icon" aria-hidden="true">A++</span></button>
+        </div>
+      </div>
+      <div class="a11y-bar__group">
+        <button type="button" id="btn-contrast" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">◐</span> Alto contraste</button>
+        <button type="button" id="btn-theme" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">☾</span> Tema escuro</button>
+        <button type="button" id="btn-readable" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">✦</span> Leitura facilitada</button>
+        <button type="button" id="btn-reset-a11y" class="a11y-btn"><span aria-hidden="true">↺</span> Padrão</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header" role="banner">
+    <div class="site-header__inner">
+      <a href="index.html" class="brand" aria-label="Página inicial">
+        <svg class="brand__mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <rect width="100" height="100" rx="14" fill="#dcb35c"/>
+          <g stroke="#1a1a1a" stroke-width="3" fill="none">
+            <line x1="20" y1="20" x2="80" y2="20"/><line x1="20" y1="50" x2="80" y2="50"/><line x1="20" y1="80" x2="80" y2="80"/>
+            <line x1="20" y1="20" x2="20" y2="80"/><line x1="50" y1="20" x2="50" y2="80"/><line x1="80" y1="20" x2="80" y2="80"/>
+          </g>
+          <circle cx="35" cy="65" r="12" fill="#1a1a1a"/>
+          <circle cx="65" cy="35" r="12" fill="#fafafa" stroke="#1a1a1a" stroke-width="2"/>
+        </svg>
+        <span class="brand__text">Go &amp; Gomoku na escola<small>Produto educacional · Mackenzie</small></span>
+      </a>
+      <button type="button" class="nav-toggle" aria-controls="primary-nav" aria-expanded="false"><span aria-hidden="true">☰</span> Menu</button>
+      <nav class="main-nav" id="primary-nav" aria-label="Navegação principal">
+        <ul class="main-nav__list">
+          <li><a href="index.html">Início</a></li>
+          <li><a href="sobre.html">Sobre o projeto</a></li>
+          <li><a href="go.html">O Go</a></li>
+          <li><a href="gomoku.html">Gomoku Narabe</a></li>
+          <li><a href="sequencia-didatica.html">Sequência didática</a></li>
+          <li><a href="professores.html">Para professores</a></li>
+          <li><a href="recursos.html">Recursos</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section">
+      <div class="container container--narrow">
+        <span class="eyebrow">O Jogo</span>
+        <h1>Gomoku Narabe: cinco peças em fila</h1>
+        <p class="lead">
+          O Gomoku Narabe é um jogo de tabuleiro de origem japonesa cujo nome
+          significa, literalmente, “cinco peças em fila”. Tradicionalmente
+          jogado no mesmo tabuleiro do Go, com as mesmas peças, é a porta de
+          entrada para o universo dos jogos estratégicos asiáticos.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="container container--narrow prose">
+        <h2>Origem e tradição</h2>
+        <p>
+          De acordo com Miranda (2006), o Gomoku Narabe é
+          <q>tradicionalmente jogado num tabuleiro de Go 19×19 com as peças
+          deste mesmo jogo</q>. Essa relação direta entre os dois jogos é o
+          motivo pelo qual o Gomoku é, do ponto de vista pedagógico, a
+          melhor introdução ao Go: o estudante aprende a manejar o material
+          antes mesmo de enfrentar a complexidade estratégica do jogo
+          principal.
+        </p>
+
+        <h2>Como se joga</h2>
+        <p>
+          Vence o jogador que primeiro alinhar <strong>cinco de suas pedras
+          consecutivamente</strong> em qualquer direção — horizontal, vertical
+          ou diagonal. Pretas iniciam a partida; em seguida, brancas; e assim
+          por diante.
+        </p>
+
+        <ol>
+          <li>Os jogadores se alternam ao colocar uma pedra de cada vez sobre uma intersecção vazia.</li>
+          <li>As pedras, uma vez colocadas, não se movem.</li>
+          <li>Vence quem primeiro formar uma linha contínua de cinco pedras de mesma cor.</li>
+        </ol>
+
+        <p>
+          Diferentemente do Go, no Gomoku Narabe não há captura nem regras de
+          território. Toda a estratégia se concentra em formar — ou impedir —
+          uma fila de cinco peças.
+        </p>
+
+        <figure>
+          <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="gomoku-title gomoku-desc" class="diagram" style="background: #dcb35c;">
+            <title id="gomoku-title">Vitória de pretas no Gomoku Narabe</title>
+            <desc id="gomoku-desc">Tabuleiro 9 por 9 com pedras pretas e brancas. As pedras pretas formam uma diagonal de cinco peças consecutivas, destacada por uma linha vermelha. Esta configuração caracteriza a vitória de pretas.</desc>
+            <g stroke="#1a1a1a" stroke-width="1.4" fill="none">
+              <line x1="36" y1="36" x2="324" y2="36"/><line x1="36" y1="72" x2="324" y2="72"/><line x1="36" y1="108" x2="324" y2="108"/><line x1="36" y1="144" x2="324" y2="144"/><line x1="36" y1="180" x2="324" y2="180"/><line x1="36" y1="216" x2="324" y2="216"/><line x1="36" y1="252" x2="324" y2="252"/><line x1="36" y1="288" x2="324" y2="288"/><line x1="36" y1="324" x2="324" y2="324"/>
+              <line x1="36" y1="36" x2="36" y2="324"/><line x1="72" y1="36" x2="72" y2="324"/><line x1="108" y1="36" x2="108" y2="324"/><line x1="144" y1="36" x2="144" y2="324"/><line x1="180" y1="36" x2="180" y2="324"/><line x1="216" y1="36" x2="216" y2="324"/><line x1="252" y1="36" x2="252" y2="324"/><line x1="288" y1="36" x2="288" y2="324"/><line x1="324" y1="36" x2="324" y2="324"/>
+            </g>
+            <g fill="#1a1a1a"><circle cx="108" cy="108" r="3"/><circle cx="252" cy="108" r="3"/><circle cx="180" cy="180" r="3"/><circle cx="108" cy="252" r="3"/><circle cx="252" cy="252" r="3"/></g>
+            <!-- Pedras brancas (algumas colocadas durante a partida) -->
+            <circle cx="216" cy="180" r="15" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+            <circle cx="180" cy="216" r="15" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+            <circle cx="252" cy="216" r="15" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+            <circle cx="252" cy="180" r="15" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+            <circle cx="216" cy="216" r="15" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+            <circle cx="216" cy="252" r="15" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+            <circle cx="288" cy="216" r="15" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+            <!-- Pedras pretas no caminho diagonal vencedor (5 peças) -->
+            <circle cx="108" cy="288" r="15" fill="#1a1a1a"/>
+            <circle cx="144" cy="252" r="15" fill="#1a1a1a"/>
+            <circle cx="180" cy="216" r="15" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+            <!-- A diagonal vencedora vai de (108, 288) a (252, 144) -->
+            <circle cx="108" cy="288" r="15" fill="#1a1a1a"/>
+            <circle cx="144" cy="252" r="15" fill="#1a1a1a"/>
+            <circle cx="180" cy="216" r="15" fill="#1a1a1a"/>
+            <circle cx="216" cy="180" r="15" fill="#1a1a1a"/>
+            <circle cx="252" cy="144" r="15" fill="#1a1a1a"/>
+            <!-- Linha vermelha destacando a vitória -->
+            <line x1="108" y1="288" x2="252" y2="144" stroke="#e63946" stroke-width="4" stroke-linecap="round" opacity="0.85"/>
+            <!-- Outras pedras pretas no jogo -->
+            <circle cx="144" cy="180" r="15" fill="#1a1a1a"/>
+            <circle cx="216" cy="252" r="15" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+            <circle cx="252" cy="180" r="15" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+            <circle cx="180" cy="144" r="15" fill="#1a1a1a"/>
+          </svg>
+          <figcaption><strong>Vitória por diagonal.</strong> A linha vermelha destaca as cinco pedras pretas alinhadas que dão a vitória. A vitória pode acontecer em qualquer direção: horizontal, vertical ou diagonal.</figcaption>
+        </figure>
+
+        <h2>Por que começar pelo Gomoku?</h2>
+        <p>
+          A escolha didática pelo Gomoku Narabe como primeiro jogo a ser
+          praticado se justifica por dois motivos:
+        </p>
+        <ul>
+          <li>
+            <strong>Simplicidade da regra central</strong> — alinhar cinco
+            pedras consecutivas é uma instrução de baixíssima carga cognitiva,
+            o que aproxima todos os perfis discentes do jogo.
+          </li>
+          <li>
+            <strong>Continuidade material</strong> — o tabuleiro construído pelos
+            estudantes para o Gomoku é o mesmo que será usado, mais adiante, no
+            Go. Não há retrabalho; há progressão.
+          </li>
+        </ul>
+        <p>
+          Em síntese, o Gomoku é uma porta de entrada pedagogicamente
+          favorável ao universo dos jogos estratégicos de tabuleiro,
+          permitindo ao estudante construir familiaridade com o material e com
+          a dinâmica de turnos antes de avançar para o jogo mais complexo.
+        </p>
+
+        <div class="callout">
+          <h3>Estratégia que surpreende</h3>
+          <p>
+            Apesar da regra simples, o Gomoku Narabe permite estratégias muito
+            sofisticadas. Reconhecer ameaças adversárias, criar “forquilhas” de
+            duas linhas abertas simultaneamente e antecipar jogadas em várias
+            ramificações são habilidades que os estudantes desenvolvem ao
+            longo das partidas. É exatamente o que Hassinger-Das e colaboradores
+            (2017) descrevem como ganho cognitivo e socioemocional dos jogos
+            de tabuleiro.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container container--narrow text-center">
+        <h2>Continue explorando</h2>
+        <div class="btn-row" style="justify-content: center;">
+          <a class="btn btn--primary" href="go.html">Conhecer o Go</a>
+          <a class="btn btn--ghost" href="sequencia-didatica.html">Ver a sequência didática</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="site-footer__grid">
+      <div><h4>Sobre</h4><ul><li><a href="sobre.html">O projeto</a></li><li><a href="recursos.html#autores">Autores</a></li><li><a href="recursos.html#referencias">Referências</a></li></ul></div>
+      <div><h4>Conteúdo</h4><ul><li><a href="go.html">O Go</a></li><li><a href="gomoku.html">Gomoku Narabe</a></li><li><a href="sequencia-didatica.html">Sequência didática</a></li><li><a href="professores.html">Para professores</a></li></ul></div>
+      <div><h4>Acessibilidade</h4><ul><li><a href="https://vlibras.gov.br" rel="noopener" target="_blank">VLibras</a></li><li><a href="https://www.w3.org/WAI/standards-guidelines/wcag/" rel="noopener" target="_blank">WCAG (W3C)</a></li></ul></div>
+      <div><h4>Licença</h4><p style="margin: 0; font-size: 0.9rem;">Conteúdo educativo sob <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br" rel="noopener" target="_blank">CC BY-SA 4.0</a>.</p></div>
+    </div>
+    <div class="site-footer__bottom"><span>© 2026 — Universidade Presbiteriana Mackenzie</span><span>Pedagogia · Educação Especial e Libras</span></div>
+  </footer>
+
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

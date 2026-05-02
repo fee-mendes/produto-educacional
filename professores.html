@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Para professores — Go e Gomoku Narabe na escola</title>
+  <meta name="description" content="Guia para professores: articulação curricular DUA, recursos materiais e considerações sobre adaptações inclusivas.">
+  <meta name="theme-color" content="#c8102e">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='14' fill='%23dcb35c'/%3E%3Cg stroke='%231a1a1a' stroke-width='3' fill='none'%3E%3Cline x1='20' y1='20' x2='80' y2='20'/%3E%3Cline x1='20' y1='50' x2='80' y2='50'/%3E%3Cline x1='20' y1='80' x2='80' y2='80'/%3E%3Cline x1='20' y1='20' x2='20' y2='80'/%3E%3Cline x1='50' y1='20' x2='50' y2='80'/%3E%3Cline x1='80' y1='20' x2='80' y2='80'/%3E%3C/g%3E%3Ccircle cx='35' cy='65' r='12' fill='%231a1a1a'/%3E%3Ccircle cx='65' cy='35' r='12' fill='%23fafafa' stroke='%231a1a1a' stroke-width='2'/%3E%3C/svg%3E">
+</head>
+<body>
+  <a href="#main" class="skip-link">Pular para o conteúdo principal</a>
+
+  <div vw class="enabled" aria-label="Tradutor automático para Libras">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div>
+  </div>
+
+  <div class="a11y-bar" role="region" aria-label="Controles de acessibilidade">
+    <div class="a11y-bar__inner">
+      <div class="a11y-bar__group">
+        <span class="a11y-bar__label" id="lbl-fonte">Tamanho do texto:</span>
+        <div role="group" aria-labelledby="lbl-fonte">
+          <button type="button" class="a11y-btn" data-fontset="0.9" aria-pressed="false" aria-label="Tamanho do texto pequeno"><span class="a11y-icon" aria-hidden="true">A−</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1" aria-pressed="true" aria-label="Tamanho do texto padrão"><span class="a11y-icon" aria-hidden="true">A</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1.2" aria-pressed="false" aria-label="Tamanho do texto grande"><span class="a11y-icon" aria-hidden="true">A+</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1.4" aria-pressed="false" aria-label="Tamanho do texto extragrande"><span class="a11y-icon" aria-hidden="true">A++</span></button>
+        </div>
+      </div>
+      <div class="a11y-bar__group">
+        <button type="button" id="btn-contrast" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">◐</span> Alto contraste</button>
+        <button type="button" id="btn-theme" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">☾</span> Tema escuro</button>
+        <button type="button" id="btn-readable" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">✦</span> Leitura facilitada</button>
+        <button type="button" id="btn-reset-a11y" class="a11y-btn"><span aria-hidden="true">↺</span> Padrão</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header" role="banner">
+    <div class="site-header__inner">
+      <a href="index.html" class="brand" aria-label="Página inicial">
+        <svg class="brand__mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <rect width="100" height="100" rx="14" fill="#dcb35c"/>
+          <g stroke="#1a1a1a" stroke-width="3" fill="none">
+            <line x1="20" y1="20" x2="80" y2="20"/><line x1="20" y1="50" x2="80" y2="50"/><line x1="20" y1="80" x2="80" y2="80"/>
+            <line x1="20" y1="20" x2="20" y2="80"/><line x1="50" y1="20" x2="50" y2="80"/><line x1="80" y1="20" x2="80" y2="80"/>
+          </g>
+          <circle cx="35" cy="65" r="12" fill="#1a1a1a"/>
+          <circle cx="65" cy="35" r="12" fill="#fafafa" stroke="#1a1a1a" stroke-width="2"/>
+        </svg>
+        <span class="brand__text">Go &amp; Gomoku na escola<small>Produto educacional · Mackenzie</small></span>
+      </a>
+      <button type="button" class="nav-toggle" aria-controls="primary-nav" aria-expanded="false"><span aria-hidden="true">☰</span> Menu</button>
+      <nav class="main-nav" id="primary-nav" aria-label="Navegação principal">
+        <ul class="main-nav__list">
+          <li><a href="index.html">Início</a></li>
+          <li><a href="sobre.html">Sobre o projeto</a></li>
+          <li><a href="go.html">O Go</a></li>
+          <li><a href="gomoku.html">Gomoku Narabe</a></li>
+          <li><a href="sequencia-didatica.html">Sequência didática</a></li>
+          <li><a href="professores.html">Para professores</a></li>
+          <li><a href="recursos.html">Recursos</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section">
+      <div class="container container--narrow">
+        <span class="eyebrow">Para professores</span>
+        <h1>Guia para professores</h1>
+        <p class="lead">
+          Este guia consolida as articulações pedagógicas previstas pela
+          sequência didática e oferece referências práticas para o trabalho em
+          sala de aula. Ele não esgota — apenas exemplifica — as possibilidades
+          abertas pelos jogos sob a perspectiva de cada área de conhecimento.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="container">
+        <div class="container container--narrow prose" style="margin-bottom: 2rem;">
+          <h2>Articulação entre os eixos do DUA e as áreas de conhecimento</h2>
+          <p>
+            A partir da contextualização interdisciplinar consolidada por
+            O’Neill e Holmes (2022) e em diálogo com os três princípios do
+            Desenho Universal para a Aprendizagem mencionados por
+            Sebastián-Heredero (2020), apresenta-se a seguir a articulação
+            desses eixos com as áreas de conhecimento mobilizadas pela
+            sequência didática.
+          </p>
+        </div>
+
+        <div class="table-wrap" role="region" aria-labelledby="tab-quadro1" tabindex="0">
+          <table class="data">
+            <caption id="tab-quadro1">Quadro 1 — Articulação entre os eixos do DUA e as áreas de conhecimento na sequência didática</caption>
+            <thead>
+              <tr>
+                <th scope="col">Área de conhecimento</th>
+                <th scope="col">Múltiplos meios de engajamento (o “porquê”)</th>
+                <th scope="col">Múltiplos meios de apresentação (o “o quê”)</th>
+                <th scope="col">Múltiplos meios de ação e expressão (o “como”)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Matemática</th>
+                <td>Desafios estratégicos progressivos (tabuleiros 9×9 → 13×13 → 19×19); problematização lúdica do raciocínio.</td>
+                <td>Geometria dos tabuleiros; contagem de territórios e capturas; simetria e combinatória; análise de topologia (grupos conexos e regiões cercadas).</td>
+                <td>Resolução de problemas; medição e traçado dos tabuleiros em EVA; registro em notação simples de posições; cálculo de pontuação.</td>
+              </tr>
+              <tr>
+                <th scope="row">História</th>
+                <td>Interculturalidade; vínculo identitário com a história da imigração asiática no Brasil.</td>
+                <td>História da Ásia e da imigração nikkei, coreana e chinesa; introdução a Confúcio e ao taoismo.</td>
+                <td>Construção de linhas do tempo; pequenos seminários orais e em Libras; atividades reflexivas em sala de aula.</td>
+              </tr>
+              <tr>
+                <th scope="row">Geografia</th>
+                <td>Reconhecimento do território asiático e das comunidades asiáticas presentes no território brasileiro.</td>
+                <td>Cartografia da Ásia Oriental; fluxos migratórios; territorialidade no próprio jogo (como categoria geográfica).</td>
+                <td>Produção de mapas temáticos; localização de comunidades nikkei, coreanas e chinesas no município.</td>
+              </tr>
+              <tr>
+                <th scope="row">Língua Portuguesa</th>
+                <td>Valorização de diferentes formas de expressão e da narrativa cultural como vetores de pertencimento.</td>
+                <td>Empréstimos de origem asiática; gêneros textuais (regras, mangás, relatórios); compreensão textual.</td>
+                <td>Elaboração coletiva do guia de regras ilustrado; escrita de relatos de partida; articulação das regras do jogo.</td>
+              </tr>
+              <tr>
+                <th scope="row">Arte</th>
+                <td>Apreciação estética dos jogos, dos tabuleiros e das tradições audiovisuais asiáticas.</td>
+                <td>Introdução à xilogravura; design dos tabuleiros; introdução aos animes japoneses (como <em>Hikaru no Go</em>).</td>
+                <td>Confecção artesanal de tabuleiros e peças em EVA; ilustração do guia de regras; pintura e desenho inspirados em tradições asiáticas.</td>
+              </tr>
+              <tr>
+                <th scope="row">Educação Física</th>
+                <td>Atenção sustentada; coordenação motora; sociabilização.</td>
+                <td>Práticas corporais de tradição asiática (como o tai chi e o yoga).</td>
+                <td>Dinâmicas corporais de aquecimento; rotinas de concentração.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="container container--narrow prose" style="margin-top: 2rem;">
+          <p>
+            <em>Fonte: adaptado pelos autores, com base em Sebastián-Heredero
+            (2020) e O’Neill e Holmes (2022).</em>
+          </p>
+          <div class="callout">
+            <h3>Importante</h3>
+            <p>
+              Os segmentos do quadro <strong>não esgotam</strong>, mas apenas
+              exemplificam, as possibilidades abertas pelos jogos sob a
+              perspectiva de cada área de conhecimento. O princípio norteador
+              é o da <strong>flexibilização curricular</strong>, constituindo
+              resposta estrutural às barreiras não intencionais à
+              aprendizagem. A sequência não é prescritiva: propõe repertórios
+              que o professor pode (e deve) ajustar ao contexto de sua turma,
+              em conjunto com as orientações do Atendimento Educacional
+              Especializado (AEE).
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container container--narrow prose">
+        <h2>Considerações pedagógicas</h2>
+
+        <h3>Aprendizagem ativa e jogos</h3>
+        <p>
+          Os jogos de tabuleiro promovem aprendizagem ativa, na medida em que
+          engajam os estudantes em atividades que os obrigam a refletir sobre
+          ideias e sobre como as utilizam. Apoiando-se em pesquisas de Noda,
+          Shirotsuki e Nakao (2019), O’Neill e Holmes (2022) apontam que
+          intervenções pedagógicas fundamentadas em jogos de tabuleiro,
+          quando comparadas a formas passivas de ensino, produziram
+          resultados estatisticamente relevantes quanto à retenção do
+          conhecimento e à motivação discente.
+        </p>
+
+        <h3>Cinco domínios de aprendizagem</h3>
+        <p>
+          O’Neill e Holmes (2022) organizam a revisão da literatura entre
+          cinco domínios:
+        </p>
+        <ol>
+          <li><strong>Matemática</strong> — McFeetors e Palfy (2018) evidenciam que o Go suscita formas sofisticadas de raciocínio (indutivo, metafórico, imagístico e analógico).</li>
+          <li><strong>Científica</strong> — Peppler, Danish e Phelps (2013) mostram como os jogos potencializam a aprendizagem de sistemas complexos.</li>
+          <li><strong>Linguística</strong> — Toe e Paatsch (2018) demonstraram que estudantes surdos ou com deficiência auditiva compreenderam e comunicaram as principais características e regras do jogo, com diferenças apenas em frequência e concisão.</li>
+          <li><strong>Socioemocional</strong> — Hassinger-Das et al. (2017) evidenciam que a adesão às regras, a turnagem e a negociação de conflitos fomentam autorregulação, empatia e comunicação interpessoal.</li>
+          <li><strong>Sociocultural</strong> — Os jogos têm longa tradição como vetores de coesão social e de aprendizagem cultural, especialmente em brincadeiras multigeracionais (Ascher, 2001 <em>apud</em> O’Neill; Holmes, 2022).</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="container container--narrow prose">
+        <h2>Adaptações inclusivas: pontos de atenção</h2>
+
+        <div class="grid">
+          <div class="card">
+            <h3>Estudantes surdos</h3>
+            <p>
+              O jogo é, por natureza, visuoespacial. Ainda assim, a presença
+              de intérprete educacional de Libras é essencial nas etapas de
+              apresentação cultural, mediação por <em>guided play</em> e roda
+              de conversa final.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Estudantes com deficiência intelectual</h3>
+            <p>
+              Comece sempre pelo Gomoku Narabe e pelo tabuleiro 9×9.
+              Privilegie duplas heterogêneas, com mediação atenta. A simplicidade
+              da regra central (alinhar cinco) acolhe sem infantilizar.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Estudantes com TEA</h3>
+            <p>
+              A previsibilidade das regras claras e da turnagem (alternância
+              de turnos) é um aliado pedagógico relevante. Mantenha rotinas e
+              ofereça tempo para transições entre etapas.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Estudantes com altas habilidades</h3>
+            <p>
+              Avance na progressão do Go (9×9 → 13×13 → 19×19) e proponha
+              problemas <em>tsumego</em>. Estimule a autoria de novas posições
+              e a explicação das estratégias para os colegas.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Cooperação antes da competição</h3>
+            <p>
+              Conforme O’Neill e Holmes (2022), o jogo cooperativo tem efeitos
+              educacionais mais amplos que o competitivo. Estimule duplas que
+              jogam pensando juntas — não uma <em>contra</em> a outra.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Família como parceira</h3>
+            <p>
+              Convide a família para as oficinas de produção dos materiais e
+              para o festival final. Reconheça que os saberes culturais
+              circulam para além dos muros da escola.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container container--narrow text-center">
+        <h2>Material complementar</h2>
+        <p>Para aprofundar nas referências e baixar o produto educacional:</p>
+        <div class="btn-row" style="justify-content: center;">
+          <a class="btn btn--primary" href="recursos.html">Acessar recursos</a>
+          <a class="btn btn--ghost" href="sequencia-didatica.html">Revisitar a sequência didática</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="site-footer__grid">
+      <div><h4>Sobre</h4><ul><li><a href="sobre.html">O projeto</a></li><li><a href="recursos.html#autores">Autores</a></li><li><a href="recursos.html#referencias">Referências</a></li></ul></div>
+      <div><h4>Conteúdo</h4><ul><li><a href="go.html">O Go</a></li><li><a href="gomoku.html">Gomoku Narabe</a></li><li><a href="sequencia-didatica.html">Sequência didática</a></li><li><a href="professores.html">Para professores</a></li></ul></div>
+      <div><h4>Acessibilidade</h4><ul><li><a href="https://vlibras.gov.br" rel="noopener" target="_blank">VLibras</a></li><li><a href="https://www.w3.org/WAI/standards-guidelines/wcag/" rel="noopener" target="_blank">WCAG (W3C)</a></li></ul></div>
+      <div><h4>Licença</h4><p style="margin: 0; font-size: 0.9rem;">Conteúdo educativo sob <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br" rel="noopener" target="_blank">CC BY-SA 4.0</a>.</p></div>
+    </div>
+    <div class="site-footer__bottom"><span>© 2026 — Universidade Presbiteriana Mackenzie</span><span>Pedagogia · Educação Especial e Libras</span></div>
+  </footer>
+
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

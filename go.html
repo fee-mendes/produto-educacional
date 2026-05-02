@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O jogo de Go — Go e Gomoku Narabe na escola</title>
+  <meta name="description" content="História, regras e complexidade do Go: o mais antigo jogo de tabuleiro ainda praticado no mundo, com diagramas explicativos.">
+  <meta name="theme-color" content="#c8102e">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='14' fill='%23dcb35c'/%3E%3Cg stroke='%231a1a1a' stroke-width='3' fill='none'%3E%3Cline x1='20' y1='20' x2='80' y2='20'/%3E%3Cline x1='20' y1='50' x2='80' y2='50'/%3E%3Cline x1='20' y1='80' x2='80' y2='80'/%3E%3Cline x1='20' y1='20' x2='20' y2='80'/%3E%3Cline x1='50' y1='20' x2='50' y2='80'/%3E%3Cline x1='80' y1='20' x2='80' y2='80'/%3E%3C/g%3E%3Ccircle cx='35' cy='65' r='12' fill='%231a1a1a'/%3E%3Ccircle cx='65' cy='35' r='12' fill='%23fafafa' stroke='%231a1a1a' stroke-width='2'/%3E%3C/svg%3E">
+</head>
+<body>
+  <a href="#main" class="skip-link">Pular para o conteúdo principal</a>
+
+  <div vw class="enabled" aria-label="Tradutor automático para Libras">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div>
+  </div>
+
+  <div class="a11y-bar" role="region" aria-label="Controles de acessibilidade">
+    <div class="a11y-bar__inner">
+      <div class="a11y-bar__group">
+        <span class="a11y-bar__label" id="lbl-fonte">Tamanho do texto:</span>
+        <div role="group" aria-labelledby="lbl-fonte">
+          <button type="button" class="a11y-btn" data-fontset="0.9" aria-pressed="false" aria-label="Tamanho do texto pequeno"><span class="a11y-icon" aria-hidden="true">A−</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1" aria-pressed="true" aria-label="Tamanho do texto padrão"><span class="a11y-icon" aria-hidden="true">A</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1.2" aria-pressed="false" aria-label="Tamanho do texto grande"><span class="a11y-icon" aria-hidden="true">A+</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1.4" aria-pressed="false" aria-label="Tamanho do texto extragrande"><span class="a11y-icon" aria-hidden="true">A++</span></button>
+        </div>
+      </div>
+      <div class="a11y-bar__group">
+        <button type="button" id="btn-contrast" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">◐</span> Alto contraste</button>
+        <button type="button" id="btn-theme" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">☾</span> Tema escuro</button>
+        <button type="button" id="btn-readable" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">✦</span> Leitura facilitada</button>
+        <button type="button" id="btn-reset-a11y" class="a11y-btn"><span aria-hidden="true">↺</span> Padrão</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header" role="banner">
+    <div class="site-header__inner">
+      <a href="index.html" class="brand" aria-label="Página inicial">
+        <svg class="brand__mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <rect width="100" height="100" rx="14" fill="#dcb35c"/>
+          <g stroke="#1a1a1a" stroke-width="3" fill="none">
+            <line x1="20" y1="20" x2="80" y2="20"/><line x1="20" y1="50" x2="80" y2="50"/><line x1="20" y1="80" x2="80" y2="80"/>
+            <line x1="20" y1="20" x2="20" y2="80"/><line x1="50" y1="20" x2="50" y2="80"/><line x1="80" y1="20" x2="80" y2="80"/>
+          </g>
+          <circle cx="35" cy="65" r="12" fill="#1a1a1a"/>
+          <circle cx="65" cy="35" r="12" fill="#fafafa" stroke="#1a1a1a" stroke-width="2"/>
+        </svg>
+        <span class="brand__text">Go &amp; Gomoku na escola<small>Produto educacional · Mackenzie</small></span>
+      </a>
+      <button type="button" class="nav-toggle" aria-controls="primary-nav" aria-expanded="false"><span aria-hidden="true">☰</span> Menu</button>
+      <nav class="main-nav" id="primary-nav" aria-label="Navegação principal">
+        <ul class="main-nav__list">
+          <li><a href="index.html">Início</a></li>
+          <li><a href="sobre.html">Sobre o projeto</a></li>
+          <li><a href="go.html">O Go</a></li>
+          <li><a href="gomoku.html">Gomoku Narabe</a></li>
+          <li><a href="sequencia-didatica.html">Sequência didática</a></li>
+          <li><a href="professores.html">Para professores</a></li>
+          <li><a href="recursos.html">Recursos</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section">
+      <div class="container container--narrow">
+        <span class="eyebrow">O Jogo</span>
+        <h1>O Go: o jogo dos 361 pontos</h1>
+        <p class="lead">
+          O Go é considerado, por muitos autores, como o mais antigo jogo de
+          tabuleiro ainda praticado no mundo (Smith, 1908). Originário da
+          China, ele atravessou séculos como cultura viva — e hoje serve, na
+          escola, como ferramenta de inclusão.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="container container--narrow prose">
+        <h2>Origens e disseminação</h2>
+        <p>
+          Originário da China, onde é conhecido como <em>Wéiqí</em>, o Go tem
+          registros literários do período dos Reinos Combatentes (Dou, 2020) e
+          menções nos <em>Analectos</em> de Confúcio. Eno (2015), em sua tradução
+          inglesa, observa: <q>o yi é hoje chamado de wei-qi, embora seja muito
+          mais conhecido pelo seu nome japonês: Go</q>.
+        </p>
+        <p>
+          Do território chinês, o jogo se disseminou para a península coreana,
+          onde é conhecido como <em>Baduk</em>, e posteriormente para o Japão,
+          país em que, a partir do período Edo (1603 a 1868), recebeu
+          sistematização acadêmica por meio de escolas oficiais.
+        </p>
+        <p>
+          Atualmente, o jogo é reconhecido pela
+          <abbr title="International Go Federation">IGF</abbr>, da qual o Brasil
+          é membro fundador desde 1982. Em pesquisa populacional, a IGF
+          identificou um total de cerca de 180 milhões de pessoas registradas
+          ao redor do mundo. No Brasil, a principal comunidade situa-se na sede
+          da Brasil Nihon Kiin, em São Paulo.
+        </p>
+
+        <h2>O tabuleiro e as peças</h2>
+        <p>
+          O tabuleiro tradicional de Go é chamado <strong><em>Goban</em></strong>
+          e é composto por uma grade de 19 x 19 linhas, totalizando 361
+          intersecções. Para fins pedagógicos, no entanto, a sequência didática
+          deste produto trabalha com tabuleiros menores: 9×9, 13×13 e 19×19,
+          em ordem progressiva de profundidade estratégica.
+        </p>
+        <p>
+          As peças, chamadas <em>pedras</em>, têm duas cores contrastantes:
+          pretas e brancas. Os jogadores se alternam ao colocar uma pedra de
+          cada vez sobre as intersecções da grade. Cabe ao jogador com as
+          peças pretas efetuar o primeiro turno.
+        </p>
+
+        <figure>
+          <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="goban9-title goban9-desc" class="diagram" style="background: #dcb35c;">
+            <title id="goban9-title">Tabuleiro de Go 9×9 vazio</title>
+            <desc id="goban9-desc">Tabuleiro de Go com nove linhas horizontais e nove verticais, formando 81 intersecções. Cinco pequenos pontos pretos marcam os pontos de referência (estrela): os quatro cantos diagonais e o centro do tabuleiro.</desc>
+            <g stroke="#1a1a1a" stroke-width="1.4" fill="none">
+              <line x1="36" y1="36" x2="324" y2="36"/><line x1="36" y1="72" x2="324" y2="72"/><line x1="36" y1="108" x2="324" y2="108"/><line x1="36" y1="144" x2="324" y2="144"/><line x1="36" y1="180" x2="324" y2="180"/><line x1="36" y1="216" x2="324" y2="216"/><line x1="36" y1="252" x2="324" y2="252"/><line x1="36" y1="288" x2="324" y2="288"/><line x1="36" y1="324" x2="324" y2="324"/>
+              <line x1="36" y1="36" x2="36" y2="324"/><line x1="72" y1="36" x2="72" y2="324"/><line x1="108" y1="36" x2="108" y2="324"/><line x1="144" y1="36" x2="144" y2="324"/><line x1="180" y1="36" x2="180" y2="324"/><line x1="216" y1="36" x2="216" y2="324"/><line x1="252" y1="36" x2="252" y2="324"/><line x1="288" y1="36" x2="288" y2="324"/><line x1="324" y1="36" x2="324" y2="324"/>
+            </g>
+            <g fill="#1a1a1a">
+              <circle cx="108" cy="108" r="3.5"/><circle cx="252" cy="108" r="3.5"/><circle cx="180" cy="180" r="3.5"/><circle cx="108" cy="252" r="3.5"/><circle cx="252" cy="252" r="3.5"/>
+            </g>
+          </svg>
+          <figcaption><strong>Goban 9×9.</strong> Versão simplificada usada na fase introdutória da sequência didática. Os cinco pontos pretos são chamados <em>hoshi</em> (estrelas) e servem como marcadores de referência.</figcaption>
+        </figure>
+
+        <h2>As regras fundamentais</h2>
+        <p>
+          As regras do Go são, em essência, poucas. Esta simplicidade é uma
+          das razões pelas quais o jogo se mostra tão pedagógico: pode ser
+          ensinado a qualquer estudante, em qualquer série, e a profundidade
+          estratégica emerge da prática.
+        </p>
+
+        <h3>Regra 1 — Pedras não se movem</h3>
+        <p>
+          Uma vez colocada sobre uma intersecção, uma pedra permanece ali.
+          Ela só pode sair do tabuleiro se for capturada (regra 3). Pretas
+          jogam primeiro; brancas em seguida; e assim alternadamente.
+        </p>
+
+        <figure>
+          <svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="r1-title r1-desc" class="diagram" style="background: #dcb35c;">
+            <title id="r1-title">Sequência das três primeiras jogadas</title>
+            <desc id="r1-desc">Tabuleiro com três pedras: a pedra preta numerada 1, colocada por pretas; a pedra branca numerada 2, colocada por brancas; e a pedra preta numerada 3, colocada por pretas. As três permanecem nas intersecções onde foram colocadas.</desc>
+            <g stroke="#1a1a1a" stroke-width="1.4" fill="none">
+              <line x1="40" y1="40" x2="320" y2="40"/><line x1="40" y1="80" x2="320" y2="80"/><line x1="40" y1="120" x2="320" y2="120"/><line x1="40" y1="160" x2="320" y2="160"/><line x1="40" y1="200" x2="320" y2="200"/>
+              <line x1="40" y1="40" x2="40" y2="200"/><line x1="110" y1="40" x2="110" y2="200"/><line x1="180" y1="40" x2="180" y2="200"/><line x1="250" y1="40" x2="250" y2="200"/><line x1="320" y1="40" x2="320" y2="200"/>
+            </g>
+            <!-- Pedra preta 1 -->
+            <g><circle cx="110" cy="160" r="22" fill="#1a1a1a"/><text x="110" y="160" fill="#fff" font-size="20" font-weight="700" text-anchor="middle" dominant-baseline="central">1</text></g>
+            <!-- Pedra branca 2 -->
+            <g><circle cx="180" cy="120" r="22" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/><text x="180" y="120" fill="#1a1a1a" font-size="20" font-weight="700" text-anchor="middle" dominant-baseline="central">2</text></g>
+            <!-- Pedra preta 3 -->
+            <g><circle cx="180" cy="80" r="22" fill="#1a1a1a"/><text x="180" y="80" fill="#fff" font-size="20" font-weight="700" text-anchor="middle" dominant-baseline="central">3</text></g>
+          </svg>
+          <figcaption><strong>Sequência de jogadas.</strong> Pretas iniciam (1), brancas respondem (2), pretas voltam a jogar (3). Cada pedra fica na intersecção onde foi colocada.</figcaption>
+        </figure>
+
+        <h3>Regra 2 — Grupos e liberdades</h3>
+        <p>
+          Pedras de mesma cor adjacentes na horizontal ou na vertical (nunca
+          na diagonal) formam um <strong>grupo</strong>. Cada intersecção
+          vazia adjacente a uma pedra ou grupo é uma <strong>liberdade</strong>.
+          Liberdades são o que mantém um grupo vivo no tabuleiro.
+        </p>
+
+        <figure>
+          <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="r2-title r2-desc" class="diagram" style="background: #dcb35c;">
+            <title id="r2-title">Grupo de duas pedras pretas com seis liberdades</title>
+            <desc id="r2-desc">Tabuleiro com duas pedras pretas adjacentes na horizontal, formando um grupo. Seis pequenos círculos vermelhos numerados de 1 a 6 indicam as seis intersecções vizinhas vazias, que constituem as liberdades do grupo.</desc>
+            <g stroke="#1a1a1a" stroke-width="1.4" fill="none">
+              <line x1="40" y1="40" x2="240" y2="40"/><line x1="40" y1="80" x2="240" y2="80"/><line x1="40" y1="120" x2="240" y2="120"/><line x1="40" y1="160" x2="240" y2="160"/><line x1="40" y1="200" x2="240" y2="200"/><line x1="40" y1="240" x2="240" y2="240"/>
+              <line x1="40" y1="40" x2="40" y2="240"/><line x1="80" y1="40" x2="80" y2="240"/><line x1="120" y1="40" x2="120" y2="240"/><line x1="160" y1="40" x2="160" y2="240"/><line x1="200" y1="40" x2="200" y2="240"/><line x1="240" y1="40" x2="240" y2="240"/>
+            </g>
+            <!-- 2 pedras pretas adjacentes (grupo) -->
+            <circle cx="120" cy="160" r="18" fill="#1a1a1a"/>
+            <circle cx="160" cy="160" r="18" fill="#1a1a1a"/>
+            <!-- 6 liberdades -->
+            <g>
+              <circle cx="80" cy="160" r="11" fill="#e63946"/><text x="80" y="160" fill="#fff" font-size="11" font-weight="700" text-anchor="middle" dominant-baseline="central">1</text>
+              <circle cx="120" cy="120" r="11" fill="#e63946"/><text x="120" y="120" fill="#fff" font-size="11" font-weight="700" text-anchor="middle" dominant-baseline="central">2</text>
+              <circle cx="160" cy="120" r="11" fill="#e63946"/><text x="160" y="120" fill="#fff" font-size="11" font-weight="700" text-anchor="middle" dominant-baseline="central">3</text>
+              <circle cx="120" cy="200" r="11" fill="#e63946"/><text x="120" y="200" fill="#fff" font-size="11" font-weight="700" text-anchor="middle" dominant-baseline="central">4</text>
+              <circle cx="160" cy="200" r="11" fill="#e63946"/><text x="160" y="200" fill="#fff" font-size="11" font-weight="700" text-anchor="middle" dominant-baseline="central">5</text>
+              <circle cx="200" cy="160" r="11" fill="#e63946"/><text x="200" y="160" fill="#fff" font-size="11" font-weight="700" text-anchor="middle" dominant-baseline="central">6</text>
+            </g>
+          </svg>
+          <figcaption><strong>Grupo e liberdades.</strong> As duas pedras pretas adjacentes constituem um único grupo. Os pontos vermelhos indicam as 6 liberdades (intersecções vizinhas vazias).</figcaption>
+        </figure>
+
+        <h3>Regra 3 — Capturas</h3>
+        <p>
+          Quando um grupo perde sua última liberdade — ou seja, quando todas
+          as suas intersecções vizinhas estão ocupadas pelo adversário — o
+          grupo é <strong>capturado</strong> e retirado do tabuleiro. As
+          pedras capturadas voltam para o jogador adversário.
+        </p>
+
+        <figure>
+          <div class="diagram-row">
+            <div>
+              <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="cap1-title cap1-desc" class="diagram" style="background: #dcb35c;">
+                <title id="cap1-title">Antes da captura</title>
+                <desc id="cap1-desc">Pedra preta no centro, com três pedras brancas em três de seus lados: acima, à esquerda e à direita. Resta apenas uma liberdade abaixo da pedra preta.</desc>
+                <g stroke="#1a1a1a" stroke-width="1.4" fill="none">
+                  <line x1="40" y1="40" x2="200" y2="40"/><line x1="40" y1="80" x2="200" y2="80"/><line x1="40" y1="120" x2="200" y2="120"/><line x1="40" y1="160" x2="200" y2="160"/><line x1="40" y1="200" x2="200" y2="200"/>
+                  <line x1="40" y1="40" x2="40" y2="200"/><line x1="80" y1="40" x2="80" y2="200"/><line x1="120" y1="40" x2="120" y2="200"/><line x1="160" y1="40" x2="160" y2="200"/><line x1="200" y1="40" x2="200" y2="200"/>
+                </g>
+                <circle cx="120" cy="120" r="18" fill="#1a1a1a"/>
+                <circle cx="120" cy="80" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <circle cx="80" cy="120" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <circle cx="160" cy="120" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <!-- liberdade restante -->
+                <circle cx="120" cy="160" r="9" fill="#e63946"/>
+              </svg>
+              <p class="diagram-caption">Pedra preta com 1 liberdade restante.</p>
+            </div>
+            <div>
+              <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="cap2-title cap2-desc" class="diagram" style="background: #dcb35c;">
+                <title id="cap2-title">Última liberdade ocupada</title>
+                <desc id="cap2-desc">Pedras brancas agora ocupam todos os quatro lados da pedra preta. A jogada que ocupou a última liberdade está marcada com o número 1.</desc>
+                <g stroke="#1a1a1a" stroke-width="1.4" fill="none">
+                  <line x1="40" y1="40" x2="200" y2="40"/><line x1="40" y1="80" x2="200" y2="80"/><line x1="40" y1="120" x2="200" y2="120"/><line x1="40" y1="160" x2="200" y2="160"/><line x1="40" y1="200" x2="200" y2="200"/>
+                  <line x1="40" y1="40" x2="40" y2="200"/><line x1="80" y1="40" x2="80" y2="200"/><line x1="120" y1="40" x2="120" y2="200"/><line x1="160" y1="40" x2="160" y2="200"/><line x1="200" y1="40" x2="200" y2="200"/>
+                </g>
+                <circle cx="120" cy="120" r="18" fill="#1a1a1a"/>
+                <circle cx="120" cy="80" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <circle cx="80" cy="120" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <circle cx="160" cy="120" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <g><circle cx="120" cy="160" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/><text x="120" y="160" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle" dominant-baseline="central">1</text></g>
+              </svg>
+              <p class="diagram-caption">Brancas jogam (1) — todas as liberdades de pretas estão ocupadas.</p>
+            </div>
+            <div>
+              <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="cap3-title cap3-desc" class="diagram" style="background: #dcb35c;">
+                <title id="cap3-title">Após a captura</title>
+                <desc id="cap3-desc">A pedra preta foi removida do tabuleiro. As quatro pedras brancas formam agora uma estrutura cercando uma intersecção vazia.</desc>
+                <g stroke="#1a1a1a" stroke-width="1.4" fill="none">
+                  <line x1="40" y1="40" x2="200" y2="40"/><line x1="40" y1="80" x2="200" y2="80"/><line x1="40" y1="120" x2="200" y2="120"/><line x1="40" y1="160" x2="200" y2="160"/><line x1="40" y1="200" x2="200" y2="200"/>
+                  <line x1="40" y1="40" x2="40" y2="200"/><line x1="80" y1="40" x2="80" y2="200"/><line x1="120" y1="40" x2="120" y2="200"/><line x1="160" y1="40" x2="160" y2="200"/><line x1="200" y1="40" x2="200" y2="200"/>
+                </g>
+                <circle cx="120" cy="80" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <circle cx="80" cy="120" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <circle cx="160" cy="120" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <circle cx="120" cy="160" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+              </svg>
+              <p class="diagram-caption">A pedra preta é capturada e retirada do tabuleiro.</p>
+            </div>
+          </div>
+          <figcaption><strong>Captura.</strong> Quando todas as liberdades de um grupo são ocupadas pelo adversário, o grupo é capturado e removido do tabuleiro.</figcaption>
+        </figure>
+
+        <h3>Regra 4 — Jogadas proibidas: suicídio e ko</h3>
+        <p>
+          Duas jogadas são proibidas no Go: o <strong>suicídio</strong> e a
+          <strong>repetição imediata</strong> de uma posição anterior (regra
+          do <em>ko</em>).
+        </p>
+        <p>
+          Uma jogada é considerada <em>suicídio</em> quando ela ocupa a única
+          liberdade do próprio grupo e, ao mesmo tempo, não captura nenhum
+          grupo adversário. Em outras palavras: você não pode jogar de modo
+          que o resultado seja a remoção das suas próprias pedras.
+        </p>
+        <p>
+          A regra do <em>ko</em> (que em japonês significa “eternidade”) impede
+          que uma jogada recrie imediatamente uma posição anterior do tabuleiro.
+          Sem essa regra, capturas e recapturas poderiam se repetir infinitamente.
+        </p>
+
+        <figure>
+          <div class="diagram-row">
+            <div>
+              <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ko1-title ko1-desc" class="diagram" style="background: #dcb35c;">
+                <title id="ko1-title">Posição inicial do ko</title>
+                <desc id="ko1-desc">Configuração com pedras pretas e brancas formando um padrão característico de ko, com uma intersecção vazia marcada com a letra a, onde brancas podem capturar a pedra preta.</desc>
+                <g stroke="#1a1a1a" stroke-width="1.4" fill="none">
+                  <line x1="40" y1="40" x2="200" y2="40"/><line x1="40" y1="80" x2="200" y2="80"/><line x1="40" y1="120" x2="200" y2="120"/><line x1="40" y1="160" x2="200" y2="160"/><line x1="40" y1="200" x2="200" y2="200"/>
+                  <line x1="40" y1="40" x2="40" y2="200"/><line x1="80" y1="40" x2="80" y2="200"/><line x1="120" y1="40" x2="120" y2="200"/><line x1="160" y1="40" x2="160" y2="200"/><line x1="200" y1="40" x2="200" y2="200"/>
+                </g>
+                <circle cx="80" cy="120" r="18" fill="#1a1a1a"/>
+                <circle cx="120" cy="80" r="18" fill="#1a1a1a"/>
+                <circle cx="120" cy="160" r="18" fill="#1a1a1a"/>
+                <circle cx="160" cy="80" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <circle cx="160" cy="160" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <circle cx="200" cy="120" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <text x="160" y="120" fill="#1a1a1a" font-size="18" font-weight="700" font-style="italic" text-anchor="middle" dominant-baseline="central">a</text>
+              </svg>
+              <p class="diagram-caption">Posição inicial. Brancas podem capturar em <em>a</em>.</p>
+            </div>
+            <div>
+              <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ko2-title ko2-desc" class="diagram" style="background: #dcb35c;">
+                <title id="ko2-title">Captura do ko</title>
+                <desc id="ko2-desc">Brancas jogam na intersecção marcada com a letra a, capturando a pedra preta que tinha apenas uma liberdade. A pedra preta capturada é removida.</desc>
+                <g stroke="#1a1a1a" stroke-width="1.4" fill="none">
+                  <line x1="40" y1="40" x2="200" y2="40"/><line x1="40" y1="80" x2="200" y2="80"/><line x1="40" y1="120" x2="200" y2="120"/><line x1="40" y1="160" x2="200" y2="160"/><line x1="40" y1="200" x2="200" y2="200"/>
+                  <line x1="40" y1="40" x2="40" y2="200"/><line x1="80" y1="40" x2="80" y2="200"/><line x1="120" y1="40" x2="120" y2="200"/><line x1="160" y1="40" x2="160" y2="200"/><line x1="200" y1="40" x2="200" y2="200"/>
+                </g>
+                <circle cx="80" cy="120" r="18" fill="#1a1a1a"/>
+                <circle cx="120" cy="80" r="18" fill="#1a1a1a"/>
+                <circle cx="120" cy="160" r="18" fill="#1a1a1a"/>
+                <circle cx="160" cy="80" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <circle cx="160" cy="160" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <circle cx="200" cy="120" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <g><circle cx="160" cy="120" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/><text x="160" y="120" fill="#1a1a1a" font-size="16" font-weight="700" text-anchor="middle" dominant-baseline="central">1</text></g>
+              </svg>
+              <p class="diagram-caption">Brancas jogam (1) e capturam a pedra preta.</p>
+            </div>
+            <div>
+              <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ko3-title ko3-desc" class="diagram" style="background: #dcb35c;">
+                <title id="ko3-title">Recaptura proibida</title>
+                <desc id="ko3-desc">Pretas tentam jogar na intersecção marcada com o número 2 para recapturar imediatamente. Esta jogada é proibida pela regra do ko, pois recriaria a posição anterior.</desc>
+                <g stroke="#1a1a1a" stroke-width="1.4" fill="none">
+                  <line x1="40" y1="40" x2="200" y2="40"/><line x1="40" y1="80" x2="200" y2="80"/><line x1="40" y1="120" x2="200" y2="120"/><line x1="40" y1="160" x2="200" y2="160"/><line x1="40" y1="200" x2="200" y2="200"/>
+                  <line x1="40" y1="40" x2="40" y2="200"/><line x1="80" y1="40" x2="80" y2="200"/><line x1="120" y1="40" x2="120" y2="200"/><line x1="160" y1="40" x2="160" y2="200"/><line x1="200" y1="40" x2="200" y2="200"/>
+                </g>
+                <circle cx="120" cy="80" r="18" fill="#1a1a1a"/>
+                <circle cx="120" cy="160" r="18" fill="#1a1a1a"/>
+                <circle cx="160" cy="80" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <circle cx="160" cy="160" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <circle cx="200" cy="120" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <circle cx="160" cy="120" r="18" fill="#fafafa" stroke="#1a1a1a" stroke-width="1.5"/>
+                <!-- Tentativa proibida marcada com X -->
+                <g opacity="0.55">
+                  <circle cx="80" cy="120" r="18" fill="#1a1a1a"/>
+                  <text x="80" y="120" fill="#fff" font-size="16" font-weight="700" text-anchor="middle" dominant-baseline="central">2</text>
+                </g>
+                <line x1="62" y1="102" x2="98" y2="138" stroke="#e63946" stroke-width="3"/>
+                <line x1="98" y1="102" x2="62" y2="138" stroke="#e63946" stroke-width="3"/>
+              </svg>
+              <p class="diagram-caption">Pretas <strong>não podem</strong> recapturar imediatamente em (2): regra do <em>ko</em>.</p>
+            </div>
+          </div>
+          <figcaption><strong>A regra do <em>ko</em>.</strong> Uma jogada que recria imediatamente um estado anterior do tabuleiro é proibida. Pretas devem jogar em outro lugar antes de tentar a recaptura.</figcaption>
+        </figure>
+
+        <h3>Regra 5 — Fim de jogo e contagem</h3>
+        <p>
+          O jogo termina quando ambos os jogadores passam a vez
+          consecutivamente. Vence aquele cujo <strong>território cercado</strong>
+          (intersecções vazias delimitadas por suas pedras), somado às
+          <strong>próprias pedras vivas</strong> no tabuleiro, supere o do
+          adversário.
+        </p>
+
+        <h3>Regra 6 — A compensação <em>komi</em></h3>
+        <p>
+          Como pretas têm a vantagem de iniciar, brancas recebem uma compensação
+          ao final, chamada <em>komi</em>: entre 0,5 ponto (em tabuleiros 9×9)
+          e 6,5 pontos (em tabuleiros 19×19) somados à sua pontuação. Os meios
+          pontos garantem que <strong>nunca haja empates</strong>.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container container--narrow prose">
+        <h2>A complexidade do Go</h2>
+        <p>
+          Apesar da aparente simplicidade das regras, o Go possui notória
+          complexidade estratégica. O número de posições combinatórias legais
+          em um tabuleiro 19×19 foi aproximado por Tromp e Farnebäck (2016) em
+          <strong>2,08 × 10<sup>170</sup></strong> — um número maior do que o
+          total de átomos no universo observável.
+        </p>
+        <p>
+          Justamente por essa característica, o jogo foi por muito tempo
+          considerado o grande desafio da inteligência artificial. Foi apenas
+          em 2016 que um programa de computador foi capaz de vencer um jogador
+          profissional em partida oficial (Chouard, 2016).
+        </p>
+
+        <div class="callout">
+          <h3>O que isso ensina ao aluno?</h3>
+          <p>
+            A profundidade estratégica do Go sustenta o engajamento de
+            estudantes com altas habilidades — e mesmo de adultos profissionais —
+            ao mesmo tempo em que sua simplicidade de regras permite a entrada
+            de qualquer iniciante. É essa elasticidade que justifica o jogo como
+            ferramenta inclusiva.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="container container--narrow text-center">
+        <h2>Pronto para o próximo passo?</h2>
+        <p>
+          Para introduzir o Go aos estudantes, a sequência didática começa por
+          um jogo de regras ainda mais simples — o Gomoku Narabe — usando o
+          mesmo tabuleiro.
+        </p>
+        <div class="btn-row" style="justify-content: center;">
+          <a class="btn btn--primary" href="gomoku.html">Conhecer o Gomoku Narabe</a>
+          <a class="btn btn--ghost" href="sequencia-didatica.html">Ver a sequência didática</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="site-footer__grid">
+      <div><h4>Sobre</h4><ul><li><a href="sobre.html">O projeto</a></li><li><a href="recursos.html#autores">Autores</a></li><li><a href="recursos.html#referencias">Referências</a></li></ul></div>
+      <div><h4>Conteúdo</h4><ul><li><a href="go.html">O Go</a></li><li><a href="gomoku.html">Gomoku Narabe</a></li><li><a href="sequencia-didatica.html">Sequência didática</a></li><li><a href="professores.html">Para professores</a></li></ul></div>
+      <div><h4>Acessibilidade</h4><ul><li><a href="https://vlibras.gov.br" rel="noopener" target="_blank">VLibras</a></li><li><a href="https://www.w3.org/WAI/standards-guidelines/wcag/" rel="noopener" target="_blank">WCAG (W3C)</a></li></ul></div>
+      <div><h4>Licença</h4><p style="margin: 0; font-size: 0.9rem;">Conteúdo educativo sob <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br" rel="noopener" target="_blank">CC BY-SA 4.0</a>.</p></div>
+    </div>
+    <div class="site-footer__bottom"><span>© 2026 — Universidade Presbiteriana Mackenzie</span><span>Pedagogia · Educação Especial e Libras</span></div>
+  </footer>
+
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

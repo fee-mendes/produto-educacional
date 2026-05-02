@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sequência didática — Go e Gomoku Narabe na escola</title>
+  <meta name="description" content="As cinco etapas da sequência didática: apresentação cultural, produção artesanal, introdução ao Gomoku, progressão ao Go e festival inclusivo.">
+  <meta name="theme-color" content="#c8102e">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='14' fill='%23dcb35c'/%3E%3Cg stroke='%231a1a1a' stroke-width='3' fill='none'%3E%3Cline x1='20' y1='20' x2='80' y2='20'/%3E%3Cline x1='20' y1='50' x2='80' y2='50'/%3E%3Cline x1='20' y1='80' x2='80' y2='80'/%3E%3Cline x1='20' y1='20' x2='20' y2='80'/%3E%3Cline x1='50' y1='20' x2='50' y2='80'/%3E%3Cline x1='80' y1='20' x2='80' y2='80'/%3E%3C/g%3E%3Ccircle cx='35' cy='65' r='12' fill='%231a1a1a'/%3E%3Ccircle cx='65' cy='35' r='12' fill='%23fafafa' stroke='%231a1a1a' stroke-width='2'/%3E%3C/svg%3E">
+</head>
+<body>
+  <a href="#main" class="skip-link">Pular para o conteúdo principal</a>
+
+  <div vw class="enabled" aria-label="Tradutor automático para Libras">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div>
+  </div>
+
+  <div class="a11y-bar" role="region" aria-label="Controles de acessibilidade">
+    <div class="a11y-bar__inner">
+      <div class="a11y-bar__group">
+        <span class="a11y-bar__label" id="lbl-fonte">Tamanho do texto:</span>
+        <div role="group" aria-labelledby="lbl-fonte">
+          <button type="button" class="a11y-btn" data-fontset="0.9" aria-pressed="false" aria-label="Tamanho do texto pequeno"><span class="a11y-icon" aria-hidden="true">A−</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1" aria-pressed="true" aria-label="Tamanho do texto padrão"><span class="a11y-icon" aria-hidden="true">A</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1.2" aria-pressed="false" aria-label="Tamanho do texto grande"><span class="a11y-icon" aria-hidden="true">A+</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1.4" aria-pressed="false" aria-label="Tamanho do texto extragrande"><span class="a11y-icon" aria-hidden="true">A++</span></button>
+        </div>
+      </div>
+      <div class="a11y-bar__group">
+        <button type="button" id="btn-contrast" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">◐</span> Alto contraste</button>
+        <button type="button" id="btn-theme" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">☾</span> Tema escuro</button>
+        <button type="button" id="btn-readable" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">✦</span> Leitura facilitada</button>
+        <button type="button" id="btn-reset-a11y" class="a11y-btn"><span aria-hidden="true">↺</span> Padrão</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header" role="banner">
+    <div class="site-header__inner">
+      <a href="index.html" class="brand" aria-label="Página inicial">
+        <svg class="brand__mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <rect width="100" height="100" rx="14" fill="#dcb35c"/>
+          <g stroke="#1a1a1a" stroke-width="3" fill="none">
+            <line x1="20" y1="20" x2="80" y2="20"/><line x1="20" y1="50" x2="80" y2="50"/><line x1="20" y1="80" x2="80" y2="80"/>
+            <line x1="20" y1="20" x2="20" y2="80"/><line x1="50" y1="20" x2="50" y2="80"/><line x1="80" y1="20" x2="80" y2="80"/>
+          </g>
+          <circle cx="35" cy="65" r="12" fill="#1a1a1a"/>
+          <circle cx="65" cy="35" r="12" fill="#fafafa" stroke="#1a1a1a" stroke-width="2"/>
+        </svg>
+        <span class="brand__text">Go &amp; Gomoku na escola<small>Produto educacional · Mackenzie</small></span>
+      </a>
+      <button type="button" class="nav-toggle" aria-controls="primary-nav" aria-expanded="false"><span aria-hidden="true">☰</span> Menu</button>
+      <nav class="main-nav" id="primary-nav" aria-label="Navegação principal">
+        <ul class="main-nav__list">
+          <li><a href="index.html">Início</a></li>
+          <li><a href="sobre.html">Sobre o projeto</a></li>
+          <li><a href="go.html">O Go</a></li>
+          <li><a href="gomoku.html">Gomoku Narabe</a></li>
+          <li><a href="sequencia-didatica.html">Sequência didática</a></li>
+          <li><a href="professores.html">Para professores</a></li>
+          <li><a href="recursos.html">Recursos</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section">
+      <div class="container container--narrow">
+        <span class="eyebrow">Sequência didática</span>
+        <h1>Cinco etapas para um semestre letivo</h1>
+        <p class="lead">
+          A sequência didática traduz a fundamentação teórica em uma progressão
+          de cinco etapas, articuladas com as áreas de conhecimento previstas no
+          currículo escolar. Estima-se a duração aproximada de um semestre
+          letivo.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="container container--narrow">
+        <ol class="timeline" role="list">
+          <li class="timeline__item" data-step="1">
+            <h2>Apresentação do projeto e sensibilização cultural</h2>
+            <p>
+              Os encontros iniciais apresentam o projeto aos estudantes e os
+              convidam a mapear, em conjunto com a família, as raízes culturais
+              em suas trajetórias. Em diálogo com a interculturalidade crítica, a
+              atividade promove engajamento pelo reconhecimento das próprias
+              histórias e pela apresentação de conteúdos breves sobre as
+              comunidades estrangeiras no Brasil.
+            </p>
+            <p>
+              Quando houver estudantes surdos, a apresentação deve ser
+              conduzida com a presença de profissional intérprete em Libras.
+            </p>
+            <h3>Articulações sugeridas</h3>
+            <ul>
+              <li><strong>História e Geografia:</strong> linha do tempo das imigrações ao Brasil; cartografia da Ásia Oriental; mapeamento das comunidades nikkei, coreana e chinesa no município.</li>
+              <li><strong>Língua Portuguesa:</strong> leitura e produção de textos autobiográficos, relatos de memória, entrevistas com familiares.</li>
+              <li><strong>Arte:</strong> contato com referências visuais asiáticas que orientarão a ilustração do guia de regras (xilogravura, design de tabuleiros, animes).</li>
+              <li><strong>Matemática:</strong> exploração comparada de tradições asiáticas, árabes e ocidentais — variantes históricas do ábaco, o método visual de multiplicação por traçado de linhas, contributos árabes para a álgebra.</li>
+            </ul>
+          </li>
+
+          <li class="timeline__item" data-step="2">
+            <h2>Produção artesanal dos materiais</h2>
+            <p>
+              Oficinas semanais destinadas à produção dos materiais: tabuleiros
+              em EVA nas dimensões 9×9, 13×13 e 19×19, peças circulares pretas
+              e brancas, e exemplares físicos do guia ilustrado de regras.
+              Sugere-se a divisão dos estudantes em grupos, com etapas de
+              produção a serem desenvolvidas em atividades extraclasse,
+              <strong>com a família</strong>.
+            </p>
+            <h3>O que se aprende fazendo</h3>
+            <ul>
+              <li><strong>Matemática:</strong> mensuração em centímetros, equidistância entre linhas, contagem de intersecções, introdução à geometria plana sobre grade.</li>
+              <li><strong>Arte:</strong> ação e expressão a partir das referências visuais introduzidas na Etapa 1.</li>
+              <li><strong>Língua Portuguesa:</strong> elaboração coletiva do guia de regras — gênero instrucional —, exigindo clareza expositiva, organização sequencial e adequação ao público leitor.</li>
+            </ul>
+          </li>
+
+          <li class="timeline__item" data-step="3">
+            <h2>Introdução ao Gomoku Narabe</h2>
+            <p>
+              A escolha didática pelo Gomoku Narabe como primeiro jogo a ser
+              praticado se justifica pela simplicidade de sua regra central
+              (alinhar cinco pedras consecutivas) e pela baixa carga cognitiva
+              inicial exigida — características que aproximam todos os perfis
+              discentes.
+            </p>
+            <p>
+              As partidas são conduzidas em <strong>duplas heterogêneas</strong>,
+              conforme o modelo proposto por O’Neill e Holmes (2022), que
+              destaca o papel da colaboração na promoção de aprendizagens
+              significativas.
+            </p>
+            <h3>Mediação do professor</h3>
+            <p>
+              Recomenda-se que o professor regente circule pela sala propondo
+              perguntas abertas (abordagem de <em>guided play</em>) que incentivem
+              os estudantes a expressarem as estratégias utilizadas. Quando
+              necessário, essa mediação deve contar com o apoio de intérprete
+              de Libras.
+            </p>
+          </li>
+
+          <li class="timeline__item" data-step="4">
+            <h2>Progressão ao Go</h2>
+            <p>
+              Esta etapa mobiliza o potencial matemático do jogo, abrindo
+              espaço para a apresentação de problemas clássicos do Go
+              (<em>tsumego</em>), que estimulam o raciocínio dedutivo, indutivo
+              e imagístico. Estudantes com altas habilidades encontram um
+              repertório à altura de suas potencialidades.
+            </p>
+            <p>
+              A progressão respeita a ideia de <strong>andaimes didáticos</strong>:
+            </p>
+            <ol>
+              <li><strong>Tabuleiro 9×9:</strong> dominar as regras básicas do jogo.</li>
+              <li><strong>Tabuleiro 13×13:</strong> aprofundar a formação de grupos e a estratégia intermediária.</li>
+              <li><strong>Tabuleiro 19×19:</strong> a estratégia global e a leitura posicional adquirem centralidade.</li>
+            </ol>
+          </li>
+
+          <li class="timeline__item" data-step="5">
+            <h2>Festival inclusivo e cultural de encerramento</h2>
+            <p>
+              Como encerramento do percurso semestral, sugere-se a elaboração
+              e realização de um festival aberto à comunidade escolar, no qual
+              os estudantes expõem os materiais produzidos, o guia ilustrado
+              de regras e compõem uma mostra cultural com elementos produzidos
+              ao longo do semestre.
+            </p>
+            <p>
+              Encerra-se com <strong>roda de conversa reflexiva</strong>, acerca
+              das aprendizagens construídas e das relações com a pluralidade
+              cultural que integra a comunidade escolar.
+            </p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container container--narrow">
+        <h2>Recursos necessários</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>Materiais de baixo custo</h3>
+            <ul style="margin: 0; padding-left: 1.2em;">
+              <li>Folhas de EVA em cores contrastantes</li>
+              <li>Tesouras escolares com pontas arredondadas</li>
+              <li>Réguas (para 9×9, 13×13 e 19×19)</li>
+              <li>Canetas marcadoras permanentes</li>
+              <li>Itens de papelaria para o guia de regras</li>
+              <li>Sacos plásticos ou pequenas caixas</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Recursos complementares</h3>
+            <p style="margin-top: 0;">Quando disponíveis na unidade escolar:</p>
+            <ul style="margin: 0; padding-left: 1.2em;">
+              <li>Projetor multimídia ou TV com HDMI</li>
+              <li>Obras literárias e de divulgação cultural sobre as comunidades asiáticas</li>
+            </ul>
+            <p style="margin-bottom: 0; margin-top: 1rem;"><em>A indisponibilidade desses recursos não compromete a aplicabilidade da sequência.</em></p>
+          </div>
+          <div class="card">
+            <h3>Recursos humanos</h3>
+            <ul style="margin: 0; padding-left: 1.2em;">
+              <li>Professores regentes (das áreas envolvidas)</li>
+              <li>Especialista do AEE (planejamento e adaptações)</li>
+              <li>Intérprete educacional de Libras</li>
+              <li>Equipe gestora e pedagógica</li>
+              <li>Famílias dos estudantes</li>
+              <li>Os próprios estudantes — protagonistas</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="container container--narrow text-center">
+        <h2>Próximos passos</h2>
+        <p>Para a aplicação em sala de aula, consulte o guia destinado a professores.</p>
+        <div class="btn-row" style="justify-content: center;">
+          <a class="btn btn--primary" href="professores.html">Acessar o guia para professores</a>
+          <a class="btn btn--ghost" href="recursos.html">Baixar o produto completo</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="site-footer__grid">
+      <div><h4>Sobre</h4><ul><li><a href="sobre.html">O projeto</a></li><li><a href="recursos.html#autores">Autores</a></li><li><a href="recursos.html#referencias">Referências</a></li></ul></div>
+      <div><h4>Conteúdo</h4><ul><li><a href="go.html">O Go</a></li><li><a href="gomoku.html">Gomoku Narabe</a></li><li><a href="sequencia-didatica.html">Sequência didática</a></li><li><a href="professores.html">Para professores</a></li></ul></div>
+      <div><h4>Acessibilidade</h4><ul><li><a href="https://vlibras.gov.br" rel="noopener" target="_blank">VLibras</a></li><li><a href="https://www.w3.org/WAI/standards-guidelines/wcag/" rel="noopener" target="_blank">WCAG (W3C)</a></li></ul></div>
+      <div><h4>Licença</h4><p style="margin: 0; font-size: 0.9rem;">Conteúdo educativo sob <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br" rel="noopener" target="_blank">CC BY-SA 4.0</a>.</p></div>
+    </div>
+    <div class="site-footer__bottom"><span>© 2026 — Universidade Presbiteriana Mackenzie</span><span>Pedagogia · Educação Especial e Libras</span></div>
+  </footer>
+
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sobre o projeto — Go e Gomoku Narabe na escola</title>
+  <meta name="description" content="Apresentação, justificativa, objetivos e fundamentação teórica do produto educacional baseado em Go e Gomoku Narabe.">
+  <meta name="theme-color" content="#c8102e">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='14' fill='%23dcb35c'/%3E%3Cg stroke='%231a1a1a' stroke-width='3' fill='none'%3E%3Cline x1='20' y1='20' x2='80' y2='20'/%3E%3Cline x1='20' y1='50' x2='80' y2='50'/%3E%3Cline x1='20' y1='80' x2='80' y2='80'/%3E%3Cline x1='20' y1='20' x2='20' y2='80'/%3E%3Cline x1='50' y1='20' x2='50' y2='80'/%3E%3Cline x1='80' y1='20' x2='80' y2='80'/%3E%3C/g%3E%3Ccircle cx='35' cy='65' r='12' fill='%231a1a1a'/%3E%3Ccircle cx='65' cy='35' r='12' fill='%23fafafa' stroke='%231a1a1a' stroke-width='2'/%3E%3C/svg%3E">
+</head>
+<body>
+  <a href="#main" class="skip-link">Pular para o conteúdo principal</a>
+
+  <div vw class="enabled" aria-label="Tradutor automático para Libras">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+
+  <div class="a11y-bar" role="region" aria-label="Controles de acessibilidade">
+    <div class="a11y-bar__inner">
+      <div class="a11y-bar__group">
+        <span class="a11y-bar__label" id="lbl-fonte">Tamanho do texto:</span>
+        <div role="group" aria-labelledby="lbl-fonte">
+          <button type="button" class="a11y-btn" data-fontset="0.9" aria-pressed="false" aria-label="Tamanho do texto pequeno"><span class="a11y-icon" aria-hidden="true">A−</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1" aria-pressed="true" aria-label="Tamanho do texto padrão"><span class="a11y-icon" aria-hidden="true">A</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1.2" aria-pressed="false" aria-label="Tamanho do texto grande"><span class="a11y-icon" aria-hidden="true">A+</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1.4" aria-pressed="false" aria-label="Tamanho do texto extragrande"><span class="a11y-icon" aria-hidden="true">A++</span></button>
+        </div>
+      </div>
+      <div class="a11y-bar__group">
+        <button type="button" id="btn-contrast" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">◐</span> Alto contraste</button>
+        <button type="button" id="btn-theme" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">☾</span> Tema escuro</button>
+        <button type="button" id="btn-readable" class="a11y-btn" aria-pressed="false" title="Aumenta espaçamento entre letras e palavras"><span aria-hidden="true">✦</span> Leitura facilitada</button>
+        <button type="button" id="btn-reset-a11y" class="a11y-btn"><span aria-hidden="true">↺</span> Padrão</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header" role="banner">
+    <div class="site-header__inner">
+      <a href="index.html" class="brand" aria-label="Página inicial — Produto Educacional Go e Gomoku">
+        <svg class="brand__mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <rect width="100" height="100" rx="14" fill="#dcb35c"/>
+          <g stroke="#1a1a1a" stroke-width="3" fill="none">
+            <line x1="20" y1="20" x2="80" y2="20"/><line x1="20" y1="50" x2="80" y2="50"/><line x1="20" y1="80" x2="80" y2="80"/>
+            <line x1="20" y1="20" x2="20" y2="80"/><line x1="50" y1="20" x2="50" y2="80"/><line x1="80" y1="20" x2="80" y2="80"/>
+          </g>
+          <circle cx="35" cy="65" r="12" fill="#1a1a1a"/>
+          <circle cx="65" cy="35" r="12" fill="#fafafa" stroke="#1a1a1a" stroke-width="2"/>
+        </svg>
+        <span class="brand__text">Go &amp; Gomoku na escola<small>Produto educacional · Mackenzie</small></span>
+      </a>
+      <button type="button" class="nav-toggle" aria-controls="primary-nav" aria-expanded="false"><span aria-hidden="true">☰</span> Menu</button>
+      <nav class="main-nav" id="primary-nav" aria-label="Navegação principal">
+        <ul class="main-nav__list">
+          <li><a href="index.html">Início</a></li>
+          <li><a href="sobre.html">Sobre o projeto</a></li>
+          <li><a href="go.html">O Go</a></li>
+          <li><a href="gomoku.html">Gomoku Narabe</a></li>
+          <li><a href="sequencia-didatica.html">Sequência didática</a></li>
+          <li><a href="professores.html">Para professores</a></li>
+          <li><a href="recursos.html">Recursos</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section">
+      <div class="container container--narrow">
+        <span class="eyebrow">Sobre o projeto</span>
+        <h1>Interdisciplinaridade, aprendizado e equidade na educação</h1>
+        <p class="lead">
+          Uma sequência didática multidisciplinar para o Ensino Fundamental II, que
+          adota o Go e o Gomoku Narabe como eixos de uma proposta pedagógica
+          inclusiva, intercultural e de baixo custo de implementação.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="container container--narrow prose">
+        <h2 id="apresentacao">Apresentação</h2>
+        <p>
+          A Constituição Cidadã afirma, em seu Art. 205, a responsabilidade
+          conjunta entre Estado, família e sociedade na promoção da educação
+          para todos, “visando ao pleno desenvolvimento da pessoa, seu preparo
+          para o exercício da cidadania e sua qualificação para o trabalho”
+          (BRASIL, 1988). O subsequente Art. 206 fundamenta os pilares da
+          escola, no qual destacam-se: um ambiente plural que deve promover
+          igualdade de acesso e permanência a todos.
+        </p>
+        <p>
+          O Brasil é forjado por fluxos migratórios que vão além da tradição
+          europeia frequentemente evocada pelo currículo. A imigração japonesa
+          consolidou no país a maior comunidade <em>nikkei</em> fora do Japão.
+          Somam-se a esse contingente as comunidades coreana e chinesa, com
+          notável influência cultural nas metrópoles brasileiras. Suas culturas,
+          línguas e saberes integram, portanto, o tecido social do país.
+        </p>
+        <p>
+          Diante desse cenário, este produto propõe a introdução de jogos de
+          tabuleiro de tradição asiática, em especial o Go (China:
+          <em>Wéiqi</em>; Coreia: <em>Baduk</em>) e o Gomoku Narabe, como eixo
+          de uma sequência didática para o Ensino Fundamental II, justificada
+          tanto pela relevância cultural quanto pela potência pedagógica.
+        </p>
+
+        <div class="callout">
+          <h3>Por que jogos visuoespaciais</h3>
+          <ul style="margin: 0;">
+            <li>A dispensa da oralidade como condição de participação cria condições equânimes para estudantes surdos.</li>
+            <li>Regras simples e de fácil assimilação acolhem estudantes com deficiência intelectual e estudantes com TEA.</li>
+            <li>Apesar das regras simples, há substancial complexidade estratégica — adequada para estudantes com altas habilidades, sem segregar nem infantilizar.</li>
+          </ul>
+        </div>
+
+        <h2 id="situacao-problema">Contexto</h2>
+        <p>
+          Da Constituição Federal de 1988 ao Decreto nº 12.686/2025 (que
+          institui a Política Nacional de Educação Especial Inclusiva), o
+          ordenamento jurídico brasileiro estabelece progressivamente o direito
+          de todos os estudantes à escolarização em classes comuns da rede
+          regular. Mas a distância entre a norma e a prática cotidiana das
+          escolas permanece expressiva.
+        </p>
+        <p>
+          A legislação garante educação bilíngue (Libras/Português) e a presença
+          de intérprete em sala (Decreto nº 5.626/2005; Lei nº 14.191/2021).
+          Contudo, Lacerda (1998) demonstra que a estrutura pedagógica da escola
+          foi historicamente modelada para o aluno ouvinte, e que mesmo o avanço
+          normativo do bilinguismo não tem se traduzido em transformações das
+          metodologias de sala de aula.
+        </p>
+        <p>
+          Estudantes com deficiência intelectual enfrentam, segundo Silva e
+          Elias (2022), a ausência de formação docente específica e de
+          estratégias diferenciadas. Estudantes com altas habilidades, por sua
+          vez, são, segundo o MEC (2006), os menos identificados e atendidos
+          nos sistemas de ensino. Sebastián-Heredero (2020) sintetiza: currículos
+          inflexíveis são a principal fonte de barreiras não intencionais ao
+          aprendizado, afetando com especial intensidade os estudantes nos
+          extremos.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container container--narrow prose">
+        <h2>Justificativa: três referenciais que se articulam</h2>
+
+        <h3 id="dua">Desenho Universal para a Aprendizagem (DUA)</h3>
+        <p>
+          O DUA constitui um <em>framework</em> pedagógico que desloca o foco da
+          adaptação individual do estudante para a flexibilização estrutural do
+          próprio currículo. Conforme Sebastián-Heredero (2020), o DUA organiza-se
+          em três princípios:
+        </p>
+        <ul>
+          <li><strong>Múltiplos meios de engajamento</strong> — o “porquê” da aprendizagem;</li>
+          <li><strong>Múltiplos meios de apresentação</strong> — o “o quê” aprender;</li>
+          <li><strong>Múltiplos meios de ação e expressão</strong> — o “como” aprender.</li>
+        </ul>
+        <p>
+          A opção por jogos estratégicos de tabuleiro dialoga diretamente com os
+          três eixos. O jogo propõe modos de ação e expressão que independem da
+          fluência oral ou escrita em língua portuguesa, e o caráter lúdico,
+          associado à valorização cultural de saberes, opera como vetor de
+          engajamento.
+        </p>
+
+        <h3 id="intercultural">Interculturalidade crítica</h3>
+        <p>
+          A introdução do Go e do Gomoku Narabe constituem um gesto curricular
+          de reconhecimento da pluralidade cultural que efetivamente compõe a
+          sociedade brasileira. Rompe com os currículos inflexíveis que
+          Sebastián-Heredero (2020) e Mantoan (2003) identificam como uma das
+          principais fontes de barreiras não intencionais ao aprendizado, e
+          oferece aos estudantes um repertório que aproxima a escola das
+          comunidades nikkei, coreana e chinesa presentes em sua própria
+          comunidade.
+        </p>
+
+        <h3 id="bilingue">A perspectiva bilíngue de educação de surdos</h3>
+        <p>
+          A perspectiva bilíngue parte do princípio de que o estudante surdo é
+          falante legítimo de uma língua de modalidade visuoespacial. Práticas
+          pedagógicas que dispensam a oralidade como condição de participação
+          aproximam — ao menos simbolicamente — o ambiente escolar do universo
+          linguístico-cultural do estudante surdo, e resultam, portanto, na
+          transformação das metodologias cotidianas, conforme Lacerda (1998). O
+          jogo de tabuleiro, por ser instrumento de natureza visuoespacial,
+          configura um espaço em que estudantes surdos e ouvintes partilham um
+          mesmo código de mediação, sem dependência contínua de um profissional
+          intérprete.
+        </p>
+
+        <h3>Considerações adicionais</h3>
+        <p>
+          A produção artesanal dos materiais, longe de ser apenas resposta à
+          escassez de recursos, transforma os aprendizes em coautores,
+          fortalecendo o vínculo com o conhecimento construído e com os pares.
+          O envolvimento da família reconhece que os saberes culturais circulam
+          para além dos muros da escola. O Atendimento Educacional Especializado
+          (AEE) integra o planejamento de forma colaborativa, assegurando as
+          adaptações pertinentes a cada contexto.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="container container--narrow prose">
+        <h2 id="objetivos">Objetivos</h2>
+        <h3>Objetivo geral</h3>
+        <p>
+          Promover a plena inclusão e a formação integral de estudantes do
+          Ensino Fundamental II por meio de uma sequência didática
+          interdisciplinar, fundamentada em jogos de tabuleiro de tradição
+          asiática, estruturada a partir dos princípios do DUA, da perspectiva
+          bilíngue para surdos e da interculturalidade crítica.
+        </p>
+        <h3>Objetivos específicos</h3>
+        <ol>
+          <li>Contextualizar historicamente o Gomoku Narabe e o Go, ampliando o repertório cultural dos estudantes.</li>
+          <li>Envolver os estudantes na produção artesanal de seus próprios materiais, com a família.</li>
+          <li>Desenvolver raciocínio lógico-espacial, pensamento estratégico e atenção sustentada por meio do jogo.</li>
+          <li>Fomentar a interação sociocomunicativa inclusiva, valorizando a complementaridade entre diferentes perfis cognitivos e linguísticos.</li>
+          <li>Garantir a plena participação de todos, combatendo o capacitismo e outras formas de exclusão.</li>
+          <li>Produzir um Guia Pedagógico que envolva o treinamento e a preparação de profissionais da educação para a aplicação da proposta.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container container--narrow prose">
+        <h2 id="publico">Público-alvo</h2>
+        <p>
+          O produto destina-se prioritariamente aos estudantes do Ensino
+          Fundamental II da rede pública, com especial atenção às escolas
+          situadas em territórios periféricos. Compreende:
+        </p>
+        <ul>
+          <li>estudantes ouvintes e surdos;</li>
+          <li>estudantes com deficiência intelectual;</li>
+          <li>estudantes com Transtorno do Espectro Autista (TEA);</li>
+          <li>estudantes com altas habilidades;</li>
+          <li>estudantes sem demandas específicas vinculadas à Educação Especial.</li>
+        </ul>
+        <div class="callout callout--warning">
+          <h3>Limites desta proposta</h3>
+          <p>
+            Os autores reconhecem a ausência de estratégias específicas que
+            assegurem a plena equidade para estudantes com deficiência visual,
+            em razão das características predominantemente visuoespaciais dos
+            jogos. Não se recomenda, neste formato, a aplicação a esse público
+            sem as devidas adaptações. Pretendemos, em desdobramentos futuros,
+            incorporar recursos de acessibilidade que ampliem o alcance.
+          </p>
+        </div>
+        <p>
+          Como público secundário, o produto envolve professores das diversas
+          áreas de conhecimento, profissionais do Atendimento Educacional
+          Especializado (AEE), intérpretes de Libras, equipe gestora e
+          pedagógica e as famílias dos estudantes — convocadas como parceiras
+          ativas do processo de ensino-aprendizagem.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="container container--narrow prose">
+        <h2 id="metas">Metas do projeto</h2>
+        <h3>Em termos quantitativos</h3>
+        <ul>
+          <li>Aplicação da sequência em, no mínimo, uma turma do Ensino Fundamental II por unidade escolar participante.</li>
+          <li>Participação efetiva de 100% dos estudantes matriculados nas turmas contempladas.</li>
+          <li>Produção artesanal de, no mínimo, um tabuleiro com componentes para cada dois estudantes matriculados.</li>
+          <li>Formação dos docentes envolvidos por meio do Guia Pedagógico.</li>
+          <li>Realização de, ao menos, uma atividade do estudante em conjunto com a família.</li>
+        </ul>
+        <h3>Em termos qualitativos</h3>
+        <ul>
+          <li>Apropriação, pelos estudantes, do repertório histórico-cultural associado às tradições asiáticas.</li>
+          <li>Desenvolvimento de habilidades de raciocínio lógico-espacial.</li>
+          <li>Consolidação de um ambiente escolar pautado pelo respeito à diversidade.</li>
+          <li>Fortalecimento de vínculos entre escola, estudantes e famílias.</li>
+          <li>Constituição de práticas pedagógicas reaplicáveis, fundamentadas em DUA, interculturalidade crítica e perspectiva bilíngue.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container container--narrow text-center">
+        <h2>Próximos passos</h2>
+        <p>Conheça os jogos e a forma como eles se articulam à sequência didática.</p>
+        <div class="btn-row" style="justify-content: center;">
+          <a class="btn btn--primary" href="go.html">Conhecer o Go</a>
+          <a class="btn btn--ghost" href="gomoku.html">Conhecer o Gomoku Narabe</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="site-footer__grid">
+      <div>
+        <h4>Sobre</h4>
+        <ul>
+          <li><a href="sobre.html">O projeto</a></li>
+          <li><a href="recursos.html#autores">Autores</a></li>
+          <li><a href="recursos.html#referencias">Referências</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Conteúdo</h4>
+        <ul>
+          <li><a href="go.html">O Go</a></li>
+          <li><a href="gomoku.html">Gomoku Narabe</a></li>
+          <li><a href="sequencia-didatica.html">Sequência didática</a></li>
+          <li><a href="professores.html">Para professores</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Acessibilidade</h4>
+        <ul>
+          <li><a href="https://vlibras.gov.br" rel="noopener" target="_blank">VLibras</a></li>
+          <li><a href="https://www.w3.org/WAI/standards-guidelines/wcag/" rel="noopener" target="_blank">WCAG (W3C)</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Licença</h4>
+        <p style="margin: 0; font-size: 0.9rem;">Conteúdo educativo sob <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br" rel="noopener" target="_blank">CC BY-SA 4.0</a>.</p>
+      </div>
+    </div>
+    <div class="site-footer__bottom">
+      <span>© 2026 — Universidade Presbiteriana Mackenzie</span>
+      <span>Pedagogia · Educação Especial e Libras</span>
+    </div>
+  </footer>
+
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
