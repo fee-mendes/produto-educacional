@@ -760,7 +760,7 @@ table.data tbody tr:hover { background: var(--color-surface-2); }
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   margin-bottom: 1.5rem;
 }
-.site-footer h4 {
+.site-footer h3 {
   font-family: var(--font-family);
   font-size: 0.85rem;
   letter-spacing: 0.1em;
