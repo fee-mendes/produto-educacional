@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Construa seu tabuleiro de EVA — Go e Gomoku Narabe na escola</title>
+  <meta name="description" content="Guia passo a passo para construir tabuleiros de Go e Gomoku Narabe em EVA — material acessível, barato e ideal para uso em sala de aula.">
+  <meta name="theme-color" content="#c8102e">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='14' fill='%23dcb35c'/%3E%3Cg stroke='%231a1a1a' stroke-width='3' fill='none'%3E%3Cline x1='20' y1='20' x2='80' y2='20'/%3E%3Cline x1='20' y1='50' x2='80' y2='50'/%3E%3Cline x1='20' y1='80' x2='80' y2='80'/%3E%3Cline x1='20' y1='20' x2='20' y2='80'/%3E%3Cline x1='50' y1='20' x2='50' y2='80'/%3E%3Cline x1='80' y1='20' x2='80' y2='80'/%3E%3C/g%3E%3Ccircle cx='35' cy='65' r='12' fill='%231a1a1a'/%3E%3Ccircle cx='65' cy='35' r='12' fill='%23fafafa' stroke='%231a1a1a' stroke-width='2'/%3E%3C/svg%3E">
+  <style>
+    /* ── Estilos específicos desta página ─────────────────── */
+    .step-grid {
+      display: grid;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    @media (min-width: 720px) {
+      .step-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .step-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+    }
+    .step-card__number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 50%;
+      background: var(--color-accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .step-card__diagram {
+      margin: 1rem 0;
+      text-align: center;
+    }
+    .step-card__diagram svg {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--color-line);
+    }
+    .materials-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+    .materials-table th,
+    .materials-table td {
+      padding: 0.6rem 0.9rem;
+      border: 1px solid var(--color-line);
+      text-align: left;
+    }
+    .materials-table th {
+      background: var(--color-surface-alt, #f5f5f5);
+      font-weight: 600;
+    }
+    .materials-table tr:nth-child(even) td {
+      background: var(--color-surface, #fff);
+    }
+    .dim-box {
+      background: #fffbe6;
+      border: 2px solid #dcb35c;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+      /* Texto herda var(--color-text) do body — muda automaticamente
+         em todos os temas (claro, escuro, alto contraste). */
+      color: var(--color-text);
+    }
+    .dim-box h3 {
+      margin-top: 0;
+      /* Sem cor hardcoded: herda var(--color-text) para
+         máxima compatibilidade com todos os temas. */
+    }
+    .dim-box dl {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.3rem 1.2rem;
+      margin: 0;
+    }
+    .dim-box dt { font-weight: 600; }
+    .dim-box dd { margin: 0; color: var(--color-text-soft); }
+    /* Tema escuro: fundo ambaresco escuro, texto já é var(--color-text) = #f5f5f5 */
+    [data-theme="dark"] .dim-box { background: #2a2000; }
+    /* Alto contraste: usar superfície padrão para garantir contraste máximo */
+    [data-contrast="high"] .dim-box { background: var(--color-surface); border-width: 3px; }
+    [data-theme="dark"][data-contrast="high"] .dim-box { background: var(--color-surface); }
+  </style>
+</head>
+<body>
+
+  <div vw class="enabled" aria-label="Tradutor automático para Libras">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div>
+  </div>
+
+  <div class="a11y-bar" role="region" aria-label="Controles de acessibilidade">
+    <div class="a11y-bar__inner">
+      <div class="a11y-bar__group">
+        <span class="a11y-bar__label" id="lbl-fonte">Tamanho do texto:</span>
+        <div role="group" aria-labelledby="lbl-fonte">
+          <button type="button" class="a11y-btn" data-fontset="0.9" aria-pressed="false" aria-label="Tamanho do texto pequeno"><span class="a11y-icon" aria-hidden="true">A−</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1" aria-pressed="true" aria-label="Tamanho do texto padrão"><span class="a11y-icon" aria-hidden="true">A</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1.2" aria-pressed="false" aria-label="Tamanho do texto grande"><span class="a11y-icon" aria-hidden="true">A+</span></button>
+          <button type="button" class="a11y-btn" data-fontset="1.4" aria-pressed="false" aria-label="Tamanho do texto extragrande"><span class="a11y-icon" aria-hidden="true">A++</span></button>
+        </div>
+      </div>
+      <div class="a11y-bar__group">
+        <button type="button" id="btn-contrast" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">◐</span> Alto contraste</button>
+        <button type="button" id="btn-theme" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">☾</span> Tema escuro</button>
+        <button type="button" id="btn-readable" class="a11y-btn" aria-pressed="false"><span aria-hidden="true">✦</span> Leitura facilitada</button>
+        <button type="button" id="btn-reset-a11y" class="a11y-btn"><span aria-hidden="true">↺</span> Padrão</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header" role="banner">
+    <div class="site-header__inner">
+      <a href="index.html" class="brand" aria-label="Página inicial">
+        <svg class="brand__mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <rect width="100" height="100" rx="14" fill="#dcb35c"/>
+          <g stroke="#1a1a1a" stroke-width="3" fill="none">
+            <line x1="20" y1="20" x2="80" y2="20"/><line x1="20" y1="50" x2="80" y2="50"/><line x1="20" y1="80" x2="80" y2="80"/>
+            <line x1="20" y1="20" x2="20" y2="80"/><line x1="50" y1="20" x2="50" y2="80"/><line x1="80" y1="20" x2="80" y2="80"/>
+          </g>
+          <circle cx="35" cy="65" r="12" fill="#1a1a1a"/>
+          <circle cx="65" cy="35" r="12" fill="#fafafa" stroke="#1a1a1a" stroke-width="2"/>
+        </svg>
+        <span class="brand__text">Go &amp; Gomoku na escola<small>Produto educacional · Mackenzie</small></span>
+      </a>
+      <button type="button" class="nav-toggle" aria-controls="primary-nav" aria-expanded="false"><span aria-hidden="true">☰</span> Menu</button>
+      <nav class="main-nav" id="primary-nav" aria-label="Navegação principal">
+        <ul class="main-nav__list">
+          <li><a href="index.html">Início</a></li>
+          <li><a href="sobre.html">Sobre o projeto</a></li>
+          <li><a href="go.html">O Go</a></li>
+          <li><a href="gomoku.html">Gomoku Narabe</a></li>
+          <li><a href="sequencia-didatica.html">Sequência didática</a></li>
+          <li><a href="professores.html">Para professores</a></li>
+          <li><a href="construcao-eva.html" class="cta">Construa!</a></li>
+          <li><a href="pratique.html">Pratique!</a></li>
+          <li><a href="recursos.html">Recursos</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ── Cabeçalho da página ── -->
+    <section class="section">
+      <div class="container container--narrow">
+        <span class="eyebrow">Material didático</span>
+        <h1>Construa seu tabuleiro de EVA</h1>
+        <p class="lead">
+          Um conjunto completo de Go — tabuleiro e pedras — pode ser fabricado
+          pelos próprios estudantes com EVA, material de papelaria barato e
+          amplamente disponível. Construir o equipamento é, em si, uma atividade
+          pedagógica: reforça medidas, geometria, cooperação e o cuidado com o
+          que será usado em aula.
+        </p>
+        <p>
+          Este guia descreve como fazer um tabuleiro 9×9 (ideal para iniciantes
+          e para a sequência didática deste produto) e um tabuleiro 19×19 (para
+          partidas completas). As medidas seguem os padrões profissionais
+          adaptados para EVA, baseadas na referência histórica do pioneiro
+          Roberto Petresco, que criou e popularizou o kit de Go em EVA no Brasil
+          na virada do milênio.
+        </p>
+        <div class="callout callout--info" style="margin-top: 1.5rem;">
+          <p style="margin: 0;">
+            <strong>Custo estimado (2024):</strong> R$ 15–30 para um kit completo
+            (tabuleiro 9×9 + ~100 pedras), dependendo da qualidade do EVA e
+            da fonte de compra. Kits para turmas inteiras ficam ainda mais
+            baratos em compras no atacado.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Por que EVA? ── -->
+    <section class="section section--alt">
+      <div class="container container--narrow prose">
+        <h2>Por que EVA?</h2>
+        <p>
+          O EVA (etileno acetato de vinila) é uma espuma sintética leve, flexível,
+          colorida e de fácil corte. É o mesmo material de muitos brinquedos,
+          tapetes de academia e solados de calçado. Para o Go, ele oferece
+          vantagens práticas excepcionais em ambiente escolar.
+        </p>
+        <p>
+          A leveza e a flexibilidade tornam o transporte simples: o tabuleiro pode
+          ser enrolado ou dobrado, cabe numa mochila e resiste bem ao uso cotidiano.
+          As pedras em EVA não quebram, não fazem barulho ao cair e não apresentam
+          risco em caso de projeção acidental — um detalhe importante em salas com
+          muitas pessoas. A variedade de cores disponíveis também permite
+          personalizações e adaptações para estudantes com baixa visão.
+        </p>
+        <p>
+          Do ponto de vista econômico, uma folha de EVA de 40×60 cm custa menos de
+          R$ 3,00 em papelarias e lojas de artesanato. Com duas folhas (uma preta,
+          uma branca) e uma folha bege ou amarela para o tabuleiro, é possível
+          montar um kit de Go completo por menos de R$ 15,00 — acessível mesmo
+          para escolas públicas com orçamento restrito.
+        </p>
+      </div>
+    </section>
+
+    <!-- ── Materiais ── -->
+    <section class="section" id="materiais">
+      <div class="container container--narrow">
+        <h2>Lista de materiais</h2>
+        <p>Para um kit de Go com tabuleiro 9×9 e pedras para dois jogadores:</p>
+
+        <div style="overflow-x: auto; margin-top: 1.25rem;">
+          <table class="materials-table" aria-label="Lista de materiais para construção do kit de Go em EVA">
+            <thead>
+              <tr>
+                <th>Material</th>
+                <th>Quantidade</th>
+                <th>Observação</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Folha de EVA (cor bege, amarela ou natural)</td>
+                <td>1 folha 40×60 cm, espessura 2–3 mm</td>
+                <td>Servirá de base do tabuleiro. Espessura maior dá mais rigidez.</td>
+              </tr>
+              <tr>
+                <td>Folha de EVA preta</td>
+                <td>1 folha 40×60 cm, espessura 2–3 mm</td>
+                <td>Para as pedras pretas (∼50 pedras 9×9, ou ∼182 pedras 19×19).</td>
+              </tr>
+              <tr>
+                <td>Folha de EVA branca</td>
+                <td>1 folha 40×60 cm, espessura 2–3 mm</td>
+                <td>Para as pedras brancas.</td>
+              </tr>
+              <tr>
+                <td>Régua de 30 ou 50 cm</td>
+                <td>1</td>
+                <td>Para marcar as linhas com precisão.</td>
+              </tr>
+              <tr>
+                <td>Caneta ou lapiseira permanente (preta)</td>
+                <td>1</td>
+                <td>Para desenhar as linhas do tabuleiro. Caneta nanquim é ideal.</td>
+              </tr>
+              <tr>
+                <td>Estilete ou tesoura</td>
+                <td>1</td>
+                <td>Para cortar o tabuleiro e as pedras. O estilete dá bordas mais limpas.</td>
+              </tr>
+              <tr>
+                <td>Vazador circular / cortador de círculos</td>
+                <td>1 (diâm. ∼20 mm)</td>
+                <td>O mais eficiente para cortar as pedras. Alternativa: tesoura com compasso.</td>
+              </tr>
+              <tr>
+                <td>Base de corte (cutting mat)</td>
+                <td>1</td>
+                <td>Protege a mesa. Pode ser substituída por papelão grosso.</td>
+              </tr>
+              <tr>
+                <td>Fita crepe ou régua de metal (opcional)</td>
+                <td>—</td>
+                <td>Para guiar o estilete em cortes retos.</td>
+              </tr>
+              <tr>
+                <td>Cola de EVA ou cola quente (opcional)</td>
+                <td>—</td>
+                <td>Para reforçar bordas ou criar moldura no tabuleiro.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout--warning" style="margin-top: 1.5rem;">
+          <h3>Dica: compra coletiva</h3>
+          <p style="margin: 0;">
+            Para equipar uma turma inteira, considere comprar EVA em rolos (vendidos
+            por metro em lojas de artesanato) em vez de folhas avulsas. O custo por
+            folha cai significativamente e é possível padronizar a espessura.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Medidas ── -->
+    <section class="section section--alt" id="medidas">
+      <div class="container container--narrow">
+        <h2>Medidas oficiais e adaptações para EVA</h2>
+        <p>
+          O tabuleiro oficial de Go tem proporções levemente retangulares: as linhas
+          horizontais são um pouco mais espaçadas que as verticais. Isso compensa
+          o efeito perspectivo — quando visto de cima por um jogador sentado, o
+          tabuleiro parece perfeitamente quadrado. Para uso em sala de aula e com
+          EVA, é aceitável usar um tabuleiro quadrado (linhas igualmente espaçadas).
+        </p>
+
+        <div class="dim-box">
+          <h3>Tabuleiro 9×9 — recomendado para iniciantes</h3>
+          <dl>
+            <dt>Tamanho externo do EVA:</dt>
+            <dd>21 × 21 cm (folha A5 ou recorte de folha maior)</dd>
+            <dt>Margem em cada borda:</dt>
+            <dd>1,5 cm</dd>
+            <dt>Área de jogo (grade):</dt>
+            <dd>18 × 18 cm</dd>
+            <dt>Espaçamento entre linhas:</dt>
+            <dd>2,25 cm (= 18 cm ÷ 8 intervalos)</dd>
+            <dt>Total de linhas:</dt>
+            <dd>9 horizontais + 9 verticais = 81 intersecções</dd>
+            <dt>Pontos especiais (<em>hoshi</em>):</dt>
+            <dd>5 pontos: centro + quatro cantos internos</dd>
+            <dt>Pedras (diâmetro):</dt>
+            <dd>20 mm (cabe confortavelmente no espaço de 22,5 mm)</dd>
+          </dl>
+        </div>
+
+        <div class="dim-box">
+          <h3>Tabuleiro 19×19 — partida completa</h3>
+          <dl>
+            <dt>Tamanho externo do EVA:</dt>
+            <dd>45 × 43 cm <em>(ligeiramente retangular — conforme padrão oficial)</em></dd>
+            <dt>Margem horizontal (lados E/D):</dt>
+            <dd>1,5 cm</dd>
+            <dt>Margem vertical (topo/base):</dt>
+            <dd>1,2 cm</dd>
+            <dt>Espaçamento horizontal (colunas):</dt>
+            <dd>≈ 23,5 mm (= 42 cm ÷ 18)</dd>
+            <dt>Espaçamento vertical (linhas):</dt>
+            <dd>≈ 21,4 mm (= 38,4 cm ÷ 18)</dd>
+            <dt>Pontos <em>hoshi</em>:</dt>
+            <dd>9 pontos: centro, quatro cantos, quatro lados (posições 4–4, 10–4, 16–4 etc.)</dd>
+            <dt>Pedras (diâmetro):</dt>
+            <dd>21 mm (padrão oficial) · espessura 5 mm (EVA)</dd>
+            <dt>Quantidade de pedras:</dt>
+            <dd>181 pretas + 180 brancas = 361 pedras</dd>
+          </dl>
+        </div>
+
+        <p style="font-size: 0.9rem; color: var(--color-muted);">
+          Referência dimensional: padrões da <em>Nihon Ki-in</em> (Associação Japonesa de Go)
+          e adaptação para EVA conforme Roberto Petresco (Geocities, c. 2000).
+          O tamanho oficial japonês do goban é 454 mm × 424 mm (tabuleiro de pé) com
+          espaçamento de 23,7 mm × 21,2 mm.
+        </p>
+      </div>
+    </section>
+
+    <!-- ── Passo a passo ── -->
+    <section class="section" id="passo-a-passo">
+      <div class="container">
+        <div class="container container--narrow" style="margin-bottom: 1.5rem;">
+          <span class="eyebrow">Como fazer</span>
+          <h2>Passo a passo: tabuleiro 9×9</h2>
+          <p>
+            As etapas abaixo descrevem a construção de um tabuleiro 9×9 completo.
+            A mesma lógica se aplica ao 19×19, ajustando as medidas.
+          </p>
+        </div>
+
+        <div class="step-grid">
+
+          <!-- Passo 1 -->
+          <div class="step-card">
+            <div class="step-card__number" aria-hidden="true">1</div>
+            <h3>Cortar o tabuleiro</h3>
+            <p>
+              Recorte a folha de EVA bege/amarela em 21 × 21 cm. Use o estilete e
+              a régua para um corte limpo e reto. Uma tesoura também funciona, mas
+              pode deixar bordas irregulares.
+            </p>
+            <div class="step-card__diagram">
+              <!-- Diagrama: folha com marcação de 21x21cm -->
+              <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" width="220" height="220"
+                   aria-label="Diagrama de corte da folha de EVA em 21x21 cm">
+                <!-- Folha maior (40x60 simulada em perspectiva) -->
+                <rect x="10" y="10" width="200" height="200" rx="4" fill="#ffe0a0" stroke="#b8860b" stroke-width="1.5" stroke-dasharray="6,3"/>
+                <!-- Recorte 21x21 -->
+                <rect x="20" y="20" width="130" height="130" rx="3" fill="#ffd060" stroke="#8b6914" stroke-width="2"/>
+                <!-- Seta e medida -->
+                <line x1="20" y1="165" x2="150" y2="165" stroke="#555" stroke-width="1.2" marker-end="url(#arr)"/>
+                <line x1="20" y1="165" x2="20" y2="162" stroke="#555" stroke-width="1.2"/>
+                <line x1="150" y1="165" x2="150" y2="162" stroke="#555" stroke-width="1.2"/>
+                <text x="85" y="178" font-size="11" fill="#333" text-anchor="middle" font-family="sans-serif">21 cm</text>
+                <line x1="165" y1="20" x2="165" y2="150" stroke="#555" stroke-width="1.2"/>
+                <line x1="162" y1="20" x2="168" y2="20" stroke="#555" stroke-width="1.2"/>
+                <line x1="162" y1="150" x2="168" y2="150" stroke="#555" stroke-width="1.2"/>
+                <text x="178" y="90" font-size="11" fill="#333" text-anchor="middle" font-family="sans-serif" transform="rotate(90,178,90)">21 cm</text>
+                <!-- Tesoura decorativa -->
+                <text x="175" y="195" font-size="22" fill="#888" aria-hidden="true">✂</text>
+              </svg>
+            </div>
+            <p style="font-size: 0.9rem; color: var(--color-muted);">
+              Se quiser um acabamento mais rígido, corte uma segunda folha idêntica
+              e cole as duas com cola de EVA, formando uma espessura de 4–6 mm.
+            </p>
+          </div>
+
+          <!-- Passo 2 -->
+          <div class="step-card">
+            <div class="step-card__number" aria-hidden="true">2</div>
+            <h3>Marcar a grade</h3>
+            <p>
+              Com lápis e régua, marque a margem de 1,5 cm em todos os lados.
+              A área interna (18 × 18 cm) receberá as 9 linhas em cada direção,
+              espaçadas a cada 2,25 cm (18 ÷ 8 = 2,25).
+            </p>
+            <div class="step-card__diagram">
+              <!-- Diagrama: tabuleiro com grade marcada -->
+              <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" width="220" height="220"
+                   aria-label="Diagrama da grade do tabuleiro 9x9 com margens de 1,5 cm">
+                <!-- Fundo EVA -->
+                <rect x="5" y="5" width="210" height="210" rx="5" fill="#ffd060" stroke="#b8860b" stroke-width="1.5"/>
+                <!-- Margem indicada -->
+                <rect x="20" y="20" width="180" height="180" rx="2" fill="none" stroke="#c44" stroke-width="1" stroke-dasharray="4,3"/>
+                <!-- Grade 9x9 (passo 22.5px dentro de 180px) -->
+                <g stroke="#1a1a1a" stroke-width="1.2">
+                  <!-- Horizontais -->
+                  <line x1="20" y1="20"   x2="200" y2="20"/>
+                  <line x1="20" y1="42.5" x2="200" y2="42.5"/>
+                  <line x1="20" y1="65"   x2="200" y2="65"/>
+                  <line x1="20" y1="87.5" x2="200" y2="87.5"/>
+                  <line x1="20" y1="110"  x2="200" y2="110"/>
+                  <line x1="20" y1="132.5" x2="200" y2="132.5"/>
+                  <line x1="20" y1="155"  x2="200" y2="155"/>
+                  <line x1="20" y1="177.5" x2="200" y2="177.5"/>
+                  <line x1="20" y1="200"  x2="200" y2="200"/>
+                  <!-- Verticais -->
+                  <line x1="20"   y1="20" x2="20"   y2="200"/>
+                  <line x1="42.5" y1="20" x2="42.5" y2="200"/>
+                  <line x1="65"   y1="20" x2="65"   y2="200"/>
+                  <line x1="87.5" y1="20" x2="87.5" y2="200"/>
+                  <line x1="110"  y1="20" x2="110"  y2="200"/>
+                  <line x1="132.5" y1="20" x2="132.5" y2="200"/>
+                  <line x1="155"  y1="20" x2="155"  y2="200"/>
+                  <line x1="177.5" y1="20" x2="177.5" y2="200"/>
+                  <line x1="200"  y1="20" x2="200"  y2="200"/>
+                </g>
+                <!-- Hoshi (5 pontos) -->
+                <g fill="#1a1a1a">
+                  <circle cx="65"   cy="65"   r="3.5"/>
+                  <circle cx="155"  cy="65"   r="3.5"/>
+                  <circle cx="110"  cy="110"  r="3.5"/>
+                  <circle cx="65"   cy="155"  r="3.5"/>
+                  <circle cx="155"  cy="155"  r="3.5"/>
+                </g>
+                <!-- Cota espaçamento -->
+                <line x1="20" y1="210" x2="42.5" y2="210" stroke="#555" stroke-width="1"/>
+                <text x="31" y="218" font-size="9" fill="#555" text-anchor="middle" font-family="sans-serif">2,25 cm</text>
+                <!-- Cota margem -->
+                <line x1="5" y1="5" x2="5" y2="20" stroke="#c44" stroke-width="1"/>
+                <text x="12" y="15" font-size="8.5" fill="#c44" font-family="sans-serif">1,5 cm</text>
+              </svg>
+            </div>
+            <p style="font-size: 0.9rem; color: var(--color-muted);">
+              Use um pino ou agulha para marcar as intersecções antes de passar a
+              régua — garante alinhamento perfeito.
+            </p>
+          </div>
+
+          <!-- Passo 3 -->
+          <div class="step-card">
+            <div class="step-card__number" aria-hidden="true">3</div>
+            <h3>Desenhar as linhas e os <em>hoshi</em></h3>
+            <p>
+              Com caneta permanente e régua, trace as 18 linhas (9 horizontais
+              + 9 verticais). Depois marque os 5 pontos <em>hoshi</em> com um
+              círculo preenchido de ∼3 mm de diâmetro.
+            </p>
+            <div class="step-card__diagram">
+              <!-- Diagrama: posição dos hoshi no 9x9 -->
+              <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" width="220" height="220"
+                   aria-label="Posição dos cinco pontos hoshi no tabuleiro 9x9">
+                <rect x="5" y="5" width="210" height="210" rx="5" fill="#dcb35c" stroke="#8b6914" stroke-width="1.5"/>
+                <g stroke="#1a1a1a" stroke-width="1.2" fill="none">
+                  <line x1="20" y1="20"   x2="200" y2="20"/>
+                  <line x1="20" y1="42.5" x2="200" y2="42.5"/>
+                  <line x1="20" y1="65"   x2="200" y2="65"/>
+                  <line x1="20" y1="87.5" x2="200" y2="87.5"/>
+                  <line x1="20" y1="110"  x2="200" y2="110"/>
+                  <line x1="20" y1="132.5" x2="200" y2="132.5"/>
+                  <line x1="20" y1="155"  x2="200" y2="155"/>
+                  <line x1="20" y1="177.5" x2="200" y2="177.5"/>
+                  <line x1="20" y1="200"  x2="200" y2="200"/>
+                  <line x1="20"   y1="20" x2="20"   y2="200"/>
+                  <line x1="42.5" y1="20" x2="42.5" y2="200"/>
+                  <line x1="65"   y1="20" x2="65"   y2="200"/>
+                  <line x1="87.5" y1="20" x2="87.5" y2="200"/>
+                  <line x1="110"  y1="20" x2="110"  y2="200"/>
+                  <line x1="132.5" y1="20" x2="132.5" y2="200"/>
+                  <line x1="155"  y1="20" x2="155"  y2="200"/>
+                  <line x1="177.5" y1="20" x2="177.5" y2="200"/>
+                  <line x1="200"  y1="20" x2="200"  y2="200"/>
+                </g>
+                <!-- Hoshi com rótulos -->
+                <circle cx="65"  cy="65"  r="4" fill="#1a1a1a"/>
+                <circle cx="155" cy="65"  r="4" fill="#1a1a1a"/>
+                <circle cx="110" cy="110" r="4" fill="#1a1a1a"/>
+                <circle cx="65"  cy="155" r="4" fill="#1a1a1a"/>
+                <circle cx="155" cy="155" r="4" fill="#1a1a1a"/>
+                <!-- Rótulos -->
+                <text x="65"  y="57"  font-size="9" fill="#c44" text-anchor="middle" font-family="sans-serif" font-weight="bold">3,3</text>
+                <text x="155" y="57"  font-size="9" fill="#c44" text-anchor="middle" font-family="sans-serif" font-weight="bold">7,3</text>
+                <text x="118" y="107" font-size="9" fill="#c44" text-anchor="start"  font-family="sans-serif" font-weight="bold">5,5</text>
+                <text x="65"  y="168" font-size="9" fill="#c44" text-anchor="middle" font-family="sans-serif" font-weight="bold">3,7</text>
+                <text x="155" y="168" font-size="9" fill="#c44" text-anchor="middle" font-family="sans-serif" font-weight="bold">7,7</text>
+              </svg>
+            </div>
+            <p style="font-size: 0.9rem; color: var(--color-muted);">
+              Os <em>hoshi</em> ficam nas intersecções das linhas 3 e 7 (cantos)
+              e no centro (linha 5). No 9×9, os rótulos indicam coluna,linha
+              contados a partir do canto superior esquerdo.
+            </p>
+          </div>
+
+          <!-- Passo 4 -->
+          <div class="step-card">
+            <div class="step-card__number" aria-hidden="true">4</div>
+            <h3>Cortar as pedras</h3>
+            <p>
+              Corte círculos de 20 mm de diâmetro nas folhas preta e branca.
+              Para o tabuleiro 9×9 você precisa de 50 pedras de cada cor
+              (sobram algumas como reserva). Use um vazador circular ou
+              recorte com tesoura usando um molde de papel.
+            </p>
+            <div class="step-card__diagram">
+              <!-- Diagrama: pedras em EVA -->
+              <svg viewBox="0 0 220 180" xmlns="http://www.w3.org/2000/svg" width="220" height="180"
+                   aria-label="Pedras de Go feitas em EVA: círculos pretos e brancos de 20mm de diâmetro">
+                <!-- Fundo representando folha de EVA preta com círculos marcados -->
+                <rect x="5" y="5" width="100" height="170" rx="4" fill="#2a2a2a" stroke="#555" stroke-width="1.5"/>
+                <!-- Marcações para corte (círculos na folha preta) -->
+                <circle cx="27"  cy="27"  r="11" fill="none" stroke="#aaa" stroke-width="0.8" stroke-dasharray="3,2"/>
+                <circle cx="55"  cy="27"  r="11" fill="none" stroke="#aaa" stroke-width="0.8" stroke-dasharray="3,2"/>
+                <circle cx="83"  cy="27"  r="11" fill="none" stroke="#aaa" stroke-width="0.8" stroke-dasharray="3,2"/>
+                <circle cx="27"  cy="55"  r="11" fill="none" stroke="#aaa" stroke-width="0.8" stroke-dasharray="3,2"/>
+                <circle cx="55"  cy="55"  r="11" fill="none" stroke="#aaa" stroke-width="0.8" stroke-dasharray="3,2"/>
+                <!-- Pedra já cortada (ilustração) -->
+                <circle cx="83"  cy="55"  r="11" fill="#1a1a1a" stroke="#555" stroke-width="0.5"/>
+
+                <!-- Fundo representando folha de EVA branca -->
+                <rect x="115" y="5" width="100" height="170" rx="4" fill="#eee" stroke="#bbb" stroke-width="1.5"/>
+                <circle cx="137" cy="27"  r="11" fill="none" stroke="#999" stroke-width="0.8" stroke-dasharray="3,2"/>
+                <circle cx="165" cy="27"  r="11" fill="none" stroke="#999" stroke-width="0.8" stroke-dasharray="3,2"/>
+                <circle cx="193" cy="27"  r="11" fill="none" stroke="#999" stroke-width="0.8" stroke-dasharray="3,2"/>
+                <circle cx="137" cy="55"  r="11" fill="none" stroke="#999" stroke-width="0.8" stroke-dasharray="3,2"/>
+                <circle cx="165" cy="55"  r="11" fill="#fafafa" stroke="#ccc" stroke-width="1"/>
+
+                <!-- Pedras prontas embaixo -->
+                <g>
+                  <circle cx="30"  cy="140" r="13" fill="#1a1a1a" stroke="#555" stroke-width="0.5"/>
+                  <circle cx="60"  cy="140" r="13" fill="#1a1a1a" stroke="#555" stroke-width="0.5"/>
+                  <circle cx="90"  cy="140" r="13" fill="#1a1a1a" stroke="#555" stroke-width="0.5"/>
+                  <circle cx="130" cy="140" r="13" fill="#fafafa" stroke="#aaa" stroke-width="1"/>
+                  <circle cx="160" cy="140" r="13" fill="#fafafa" stroke="#aaa" stroke-width="1"/>
+                  <circle cx="190" cy="140" r="13" fill="#fafafa" stroke="#aaa" stroke-width="1"/>
+                </g>
+                <!-- Cota: diâmetro -->
+                <line x1="17" y1="158" x2="43" y2="158" stroke="#c44" stroke-width="1"/>
+                <line x1="17" y1="155" x2="17" y2="161" stroke="#c44" stroke-width="1"/>
+                <line x1="43" y1="155" x2="43" y2="161" stroke="#c44" stroke-width="1"/>
+                <text x="30" y="170" font-size="9" fill="#c44" text-anchor="middle" font-family="sans-serif">20 mm</text>
+
+                <!-- Rótulos das folhas -->
+                <text x="55"  y="175" font-size="10" fill="#ccc" text-anchor="middle" font-family="sans-serif">EVA preta</text>
+                <text x="165" y="175" font-size="10" fill="#888" text-anchor="middle" font-family="sans-serif">EVA branca</text>
+              </svg>
+            </div>
+            <p style="font-size: 0.9rem; color: var(--color-muted);">
+              Uma folha de 40×60 cm comporta ∼200 pedras de 20 mm com boa
+              utilização do material (≈ 14 colunas × 14 linhas).
+            </p>
+          </div>
+
+          <!-- Passo 5 -->
+          <div class="step-card">
+            <div class="step-card__number" aria-hidden="true">5</div>
+            <h3>Acabamento e proteção (opcional)</h3>
+            <p>
+              Para aumentar a durabilidade, aplique uma camada de verniz acrílico
+              fosco sobre as linhas do tabuleiro. Isso evita que a caneta
+              desbote com o manuseio. Para as pedras, não é necessário acabamento.
+            </p>
+            <p>
+              Uma segunda opção é plastificar o tabuleiro inteiro com plástico
+              adesivo transparente (Contact). Isso torna o tabuleiro fácil de
+              limpar e dá uma aparência profissional.
+            </p>
+            <p>
+              Se quiser um tabuleiro dupla-face, use as duas faces do EVA:
+              tabuleiro 9×9 de um lado e 19×19 do outro, usando a mesma folha
+              (se grande o suficiente) ou colando duas folhas.
+            </p>
+            <div class="step-card__diagram">
+              <!-- Diagrama: tabuleiro dupla-face -->
+              <svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg" width="220" height="140"
+                   aria-label="Ilustração de tabuleiro dupla-face: 9x9 de um lado, 19x19 do outro">
+                <!-- Face da frente: 9x9 -->
+                <rect x="10" y="10" width="90" height="90" rx="4" fill="#dcb35c" stroke="#8b6914" stroke-width="1.5"/>
+                <g stroke="#1a1a1a" stroke-width="0.8">
+                  <line x1="20" y1="20" x2="90" y2="20"/><line x1="20" y1="28.75" x2="90" y2="28.75"/>
+                  <line x1="20" y1="37.5" x2="90" y2="37.5"/><line x1="20" y1="46.25" x2="90" y2="46.25"/>
+                  <line x1="20" y1="55" x2="90" y2="55"/><line x1="20" y1="63.75" x2="90" y2="63.75"/>
+                  <line x1="20" y1="72.5" x2="90" y2="72.5"/><line x1="20" y1="81.25" x2="90" y2="81.25"/>
+                  <line x1="20" y1="90" x2="90" y2="90"/>
+                  <line x1="20" y1="20" x2="20" y2="90"/><line x1="28.75" y1="20" x2="28.75" y2="90"/>
+                  <line x1="37.5" y1="20" x2="37.5" y2="90"/><line x1="46.25" y1="20" x2="46.25" y2="90"/>
+                  <line x1="55" y1="20" x2="55" y2="90"/><line x1="63.75" y1="20" x2="63.75" y2="90"/>
+                  <line x1="72.5" y1="20" x2="72.5" y2="90"/><line x1="81.25" y1="20" x2="81.25" y2="90"/>
+                  <line x1="90" y1="20" x2="90" y2="90"/>
+                </g>
+                <circle cx="37.5" cy="37.5" r="2.5" fill="#1a1a1a"/>
+                <circle cx="72.5" cy="37.5" r="2.5" fill="#1a1a1a"/>
+                <circle cx="55"   cy="55"   r="2.5" fill="#1a1a1a"/>
+                <circle cx="37.5" cy="72.5" r="2.5" fill="#1a1a1a"/>
+                <circle cx="72.5" cy="72.5" r="2.5" fill="#1a1a1a"/>
+                <text x="55" y="108" font-size="10" fill="#666" text-anchor="middle" font-family="sans-serif">9 × 9</text>
+
+                <!-- Seta de virada -->
+                <text x="107" y="58" font-size="22" fill="#aaa" text-anchor="middle" aria-hidden="true">⟳</text>
+
+                <!-- Face do verso: 19x19 (miniatura) -->
+                <rect x="120" y="10" width="90" height="90" rx="4" fill="#e8c86e" stroke="#8b6914" stroke-width="1.5"/>
+                <g stroke="#1a1a1a" stroke-width="0.5" opacity="0.7">
+                  <!-- 19 linhas comprimidas: espaçamento 80/18 ≈ 4.44px -->
+                  <line x1="130" y1="20" x2="200" y2="20"/>
+                  <line x1="130" y1="24.4" x2="200" y2="24.4"/>
+                  <line x1="130" y1="28.9" x2="200" y2="28.9"/>
+                  <line x1="130" y1="33.3" x2="200" y2="33.3"/>
+                  <line x1="130" y1="37.8" x2="200" y2="37.8"/>
+                  <line x1="130" y1="42.2" x2="200" y2="42.2"/>
+                  <line x1="130" y1="46.7" x2="200" y2="46.7"/>
+                  <line x1="130" y1="51.1" x2="200" y2="51.1"/>
+                  <line x1="130" y1="55.6" x2="200" y2="55.6"/>
+                  <line x1="130" y1="60"   x2="200" y2="60"/>
+                  <line x1="130" y1="64.4" x2="200" y2="64.4"/>
+                  <line x1="130" y1="68.9" x2="200" y2="68.9"/>
+                  <line x1="130" y1="73.3" x2="200" y2="73.3"/>
+                  <line x1="130" y1="77.8" x2="200" y2="77.8"/>
+                  <line x1="130" y1="82.2" x2="200" y2="82.2"/>
+                  <line x1="130" y1="86.7" x2="200" y2="86.7"/>
+                  <line x1="130" y1="91.1" x2="200" y2="91.1"/>
+                  <line x1="130" y1="95.6" x2="200" y2="95.6"/>
+                  <line x1="130" y1="100"  x2="200" y2="100"/>
+                  <line x1="130" y1="20" x2="130" y2="100"/>
+                  <line x1="134.4" y1="20" x2="134.4" y2="100"/>
+                  <line x1="138.9" y1="20" x2="138.9" y2="100"/>
+                  <line x1="143.3" y1="20" x2="143.3" y2="100"/>
+                  <line x1="147.8" y1="20" x2="147.8" y2="100"/>
+                  <line x1="152.2" y1="20" x2="152.2" y2="100"/>
+                  <line x1="156.7" y1="20" x2="156.7" y2="100"/>
+                  <line x1="161.1" y1="20" x2="161.1" y2="100"/>
+                  <line x1="165.6" y1="20" x2="165.6" y2="100"/>
+                  <line x1="170"   y1="20" x2="170"   y2="100"/>
+                  <line x1="174.4" y1="20" x2="174.4" y2="100"/>
+                  <line x1="178.9" y1="20" x2="178.9" y2="100"/>
+                  <line x1="183.3" y1="20" x2="183.3" y2="100"/>
+                  <line x1="187.8" y1="20" x2="187.8" y2="100"/>
+                  <line x1="192.2" y1="20" x2="192.2" y2="100"/>
+                  <line x1="196.7" y1="20" x2="196.7" y2="100"/>
+                  <line x1="201.1" y1="20" x2="201.1" y2="100"/>
+                  <!-- Nota: excede um pouco, mas é ilustrativo -->
+                  <line x1="200"   y1="20" x2="200"   y2="100"/>
+                </g>
+                <text x="165" y="118" font-size="10" fill="#666" text-anchor="middle" font-family="sans-serif">19 × 19</text>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Passo 6 -->
+          <div class="step-card">
+            <div class="step-card__number" aria-hidden="true">6</div>
+            <h3>Guardar o kit</h3>
+            <p>
+              As pedras podem ser guardadas em dois saquinhos plásticos (um para
+              cada cor) ou em uma caixinha de papelão simples. O tabuleiro pode
+              ser enrolado com as pedras dentro, formando um rolo que cabe
+              facilmente em uma mochila.
+            </p>
+            <p>
+              Para turmas grandes, identifique os kits de cada grupo com fita crepe
+              e caneta. Uma solução elegante é costurar um pequenoenvelope de tecido
+              para cada kit — pode virar outro projeto de Educação Física ou Artes.
+            </p>
+            <p style="font-size: 0.9rem; color: var(--color-muted);">
+              O EVA resiste bem à umidade e ao manuseio frequente. Kits bem
+              guardados duram vários anos de uso escolar.
+            </p>
+          </div>
+
+        </div><!-- /step-grid -->
+      </div>
+    </section>
+
+    <!-- ── Variações e dicas avançadas ── -->
+    <section class="section section--alt" id="variacoes">
+      <div class="container container--narrow prose">
+        <h2>Variações e dicas avançadas</h2>
+
+        <h3>Tabuleiro com numeração</h3>
+        <p>
+          Para facilitar a análise de partidas em sala, adicione letras nas colunas
+          (A–I para 9×9; A–T excluindo a letra I para 19×19) e números nas linhas
+          (1–9 ou 1–19). Isso permite que o professor anote jogadas no quadro e
+          que os estudantes as reproduzam no tabuleiro físico.
+        </p>
+
+        <h3>Pedras com textura tátil</h3>
+        <p>
+          Para estudantes com deficiência visual parcial, considere diferenciar
+          as pedras pretas e brancas por textura: cole um ponto de cola quente
+          no centro de todas as pedras de uma cor, ou use EVA texturizado para
+          uma das cores. Essa adaptação cabe dentro da proposta do Desenho
+          Universal para a Aprendizagem.
+        </p>
+
+        <h3>Tamanho das pedras e do tabuleiro</h3>
+        <p>
+          Para crianças menores ou para uso com estudantes com dificuldade motora
+          fina, considere aumentar o tamanho do tabuleiro (espaçamento de 3 cm
+          em vez de 2,25 cm) e das pedras (25 mm em vez de 20 mm). Isso facilita
+          o posicionamento e reduz a exigência de precisão manual.
+        </p>
+
+        <h3>Tabuleiro em papel plastificado</h3>
+        <p>
+          Uma alternativa ao EVA para o tabuleiro é imprimir a grade em papel A3
+          e plastificá-lo em uma gráfica (custo de R$ 2–5). O resultado é mais
+          leve e fácil de armazenar, embora menos resistente ao dobramento
+          repetido. As pedras de EVA continuam sendo a melhor escolha para as
+          peças, pois não deslizam sobre a superfície plastificada.
+        </p>
+
+        <h3>Construção como atividade de sala</h3>
+        <p>
+          A fabricação do kit pode integrar a primeira aula da sequência didática:
+          cada dupla de estudantes constrói seu próprio tabuleiro. Além de
+          introduzir os jogos, a atividade mobiliza conceitos de geometria plana
+          (medidas, ângulos retos, simetria) e promove cooperação. O tempo
+          necessário é de uma aula de 50 minutos para o tabuleiro 9×9, mais
+          uma aula para cortar as pedras.
+        </p>
+      </div>
+    </section>
+
+    <!-- ── Referências de construção ── -->
+    <section class="section" id="referencias-construcao">
+      <div class="container container--narrow prose">
+        <h2>Referências e fontes</h2>
+        <p>
+          As medidas e orientações deste guia foram baseadas nas seguintes fontes:
+        </p>
+        <ul>
+          <li>
+            PETRESCO, Roberto. <strong>Go Equipment</strong>. Geocities / TimesSquare
+            Stadium, c. 2000. Disponível (arquivo histórico) em:
+            <a href="https://web.archive.org/web/20091021083614/http://geocities.com/TimesSquare/Stadium/9281/eqengl.html"
+               rel="noopener" target="_blank">Internet Archive</a>.
+            — Pioneiro na popularização do kit de Go em EVA no Brasil; descreve
+            dimensões, tipos de material e custos do kit desenvolvido por ele.
+          </li>
+          <li>
+            GO MAGIC. <strong>Goban</strong>. Disponível em:
+            <a href="https://gomagic.org/go-term/goban/" rel="noopener" target="_blank">gomagic.org</a>.
+            — Dimensões e padrões do goban oficial japonês.
+          </li>
+          <li>
+            NIHON KI-IN. <strong>Padrões de equipamento</strong>. In: SMITH, Arthur.
+            <em>The Game of Go</em>. Nova Iorque: Plimpton Press Norwood Mass, 1908.
+            Disponível em:
+            <a href="https://www.gutenberg.org/files/66632/66632-h/66632-h.htm"
+               rel="noopener" target="_blank">Projeto Gutenberg</a>.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ── CTA ── -->
+    <section class="section section--alt">
+      <div class="container container--narrow text-center">
+        <h2>Pronto para jogar?</h2>
+        <p>
+          Com o kit em mãos, experimente as regras no navegador antes de
+          levar para a sala de aula.
+        </p>
+        <div class="btn-row" style="justify-content: center;">
+          <a class="btn btn--primary" href="pratique.html">Jogar no navegador</a>
+          <a class="btn btn--ghost" href="sequencia-didatica.html">Ver a sequência didática</a>
+          <a class="btn btn--ghost" href="professores.html">Guia para professores</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="site-footer__grid">
+      <div><h3>Sobre</h3><ul><li><a href="sobre.html">O projeto</a></li><li><a href="recursos.html#autores">Autores</a></li><li><a href="recursos.html#referencias">Referências</a></li></ul></div>
+      <div><h3>Conteúdo</h3><ul><li><a href="go.html">O Go</a></li><li><a href="gomoku.html">Gomoku Narabe</a></li><li><a href="sequencia-didatica.html">Sequência didática</a></li><li><a href="professores.html">Para professores</a></li><li><a href="construcao-eva.html">Construa seu tabuleiro</a></li></ul></div>
+      <div><h3>Acessibilidade</h3><ul><li><a href="https://vlibras.gov.br" rel="noopener" target="_blank">VLibras</a></li><li><a href="https://www.w3.org/WAI/standards-guidelines/wcag/" rel="noopener" target="_blank">WCAG (W3C)</a></li></ul></div>
+      <div><h3>Licença</h3><p style="margin: 0; font-size: 0.9rem;">Conteúdo educativo sob <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br" rel="noopener" target="_blank">CC BY-SA 4.0</a>.</p></div>
+    </div>
+    <div class="site-footer__bottom">
+      <span>© 2026 — Universidade Presbiteriana Mackenzie · Pedagogia, Educação Especial e Libras</span>
+      <a href="https://github.com/fee-mendes/produto-educacional/" rel="noopener" target="_blank">Reportar problema ou sugerir melhoria</a>
+    </div>
+  </footer>
+
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

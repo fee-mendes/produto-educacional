@@ -8,6 +8,8 @@
   <meta name="theme-color" content="#c8102e">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='14' fill='%23dcb35c'/%3E%3Cg stroke='%231a1a1a' stroke-width='3' fill='none'%3E%3Cline x1='20' y1='20' x2='80' y2='20'/%3E%3Cline x1='20' y1='50' x2='80' y2='50'/%3E%3Cline x1='20' y1='80' x2='80' y2='80'/%3E%3Cline x1='20' y1='20' x2='20' y2='80'/%3E%3Cline x1='50' y1='20' x2='50' y2='80'/%3E%3Cline x1='80' y1='20' x2='80' y2='80'/%3E%3C/g%3E%3Ccircle cx='35' cy='65' r='12' fill='%231a1a1a'/%3E%3Ccircle cx='65' cy='35' r='12' fill='%23fafafa' stroke='%231a1a1a' stroke-width='2'/%3E%3C/svg%3E">
+  <!-- WGo.js — biblioteca open-source para o jogo de Go (MIT) -->
+  <script src="https://cdn.jsdelivr.net/gh/waltheri/wgo.js@master/wgo/wgo.min.js"></script>
 </head>
 <body>
 
@@ -59,6 +61,7 @@
           <li><a href="gomoku.html">Gomoku Narabe</a></li>
           <li><a href="sequencia-didatica.html">Sequência didática</a></li>
           <li><a href="professores.html">Para professores</a></li>
+          <li><a href="construcao-eva.html">Construa!</a></li>
           <li><a href="pratique.html" class="cta">Pratique!</a></li>
           <li><a href="recursos.html">Recursos</a></li>
         </ul>
@@ -135,7 +138,7 @@
       </div>
     </section>
 
-    <!-- ========== GO ========== -->
+    <!-- ========== GO (WGo.js) ========== -->
     <section class="section" id="go-game">
       <div class="container">
         <div class="container container--narrow" style="margin-bottom: 1.5rem;">
@@ -149,26 +152,25 @@
             pontos de <em>komi</em> para brancas).
           </p>
           <p style="font-size: 0.9rem; color: var(--color-muted);">
-            <strong>Versão simplificada:</strong> esta implementação aplica
-            captura e impede o suicídio, mas não a regra do <em>ko</em>; é
-            suficiente para experimentar a dinâmica do jogo em sala.
+            <strong>Versão completa:</strong> esta implementação utiliza a
+            biblioteca <a href="https://wgo.waltheri.net/" rel="noopener" target="_blank">WGo.js</a>
+            e aplica as regras de captura, impedimento de suicídio e a regra
+            do <em>ko</em>. Ideal para experimentar a dinâmica do jogo em sala.
           </p>
         </div>
 
         <div class="game">
           <div class="game__board-wrap">
-            <svg id="board-go" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg" class="game__board" role="application" aria-label="Tabuleiro de Go 9 por 9">
-              <rect width="360" height="360" fill="#dcb35c"/>
-              <g stroke="#1a1a1a" stroke-width="1.4" fill="none">
-                <line x1="36" y1="36" x2="324" y2="36"/><line x1="36" y1="72" x2="324" y2="72"/><line x1="36" y1="108" x2="324" y2="108"/><line x1="36" y1="144" x2="324" y2="144"/><line x1="36" y1="180" x2="324" y2="180"/><line x1="36" y1="216" x2="324" y2="216"/><line x1="36" y1="252" x2="324" y2="252"/><line x1="36" y1="288" x2="324" y2="288"/><line x1="36" y1="324" x2="324" y2="324"/>
-                <line x1="36" y1="36" x2="36" y2="324"/><line x1="72" y1="36" x2="72" y2="324"/><line x1="108" y1="36" x2="108" y2="324"/><line x1="144" y1="36" x2="144" y2="324"/><line x1="180" y1="36" x2="180" y2="324"/><line x1="216" y1="36" x2="216" y2="324"/><line x1="252" y1="36" x2="252" y2="324"/><line x1="288" y1="36" x2="288" y2="324"/><line x1="324" y1="36" x2="324" y2="324"/>
-              </g>
-              <g fill="#1a1a1a">
-                <circle cx="108" cy="108" r="3"/><circle cx="252" cy="108" r="3"/><circle cx="180" cy="180" r="3"/><circle cx="108" cy="252" r="3"/><circle cx="252" cy="252" r="3"/>
-              </g>
-              <g class="stones"></g>
-              <g class="overlay"></g>
-            </svg>
+            <!--
+              O WGo.js inserirá múltiplos canvas sobrepostos (position: absolute)
+              dentro deste elemento. O JS define a altura igual à largura para
+              garantir um tabuleiro quadrado e responsivo.
+            -->
+            <div id="board-go-wgo"
+                 style="position: relative; width: 100%; background: transparent; border-radius: 6px; overflow: hidden;"
+                 role="application"
+                 aria-label="Tabuleiro de Go 9 por 9 — renderizado pela biblioteca WGo.js">
+            </div>
           </div>
           <aside class="game__panel">
             <h3>Painel</h3>
@@ -189,7 +191,7 @@
               <button type="button" class="btn btn--secondary" data-action="pass" data-game="go">Passar</button>
             </div>
             <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--color-muted);">
-              Dica: dois “passar” seguidos encerram a partida.
+              Dica: dois "passar" seguidos encerram a partida.
             </p>
           </aside>
         </div>
@@ -200,28 +202,30 @@
       <div class="container container--narrow prose">
         <h2>Sobre estas versões</h2>
         <p>
-          As implementações dos jogos foram feitas em JavaScript puro,
-          sem bibliotecas externas, para que funcionem mesmo em conexões
-          instáveis e respeitem a privacidade do estudante. Os tabuleiros são
-          renderizados em SVG (acessível, escalável) e respondem a clique e
-          toque.
+          O <strong>Gomoku Narabe</strong> foi implementado em JavaScript puro,
+          sem dependências externas, para que funcione mesmo em conexões instáveis
+          e respeite a privacidade do estudante. O tabuleiro é renderizado em SVG
+          (acessível, escalável) e responde a clique e toque.
         </p>
         <p>
-          A versão do Go aqui apresentada é <strong>simplificada</strong>:
-          implementa as regras de captura e o impedimento do suicídio, mas
-          não a regra do <em>ko</em> nem a contagem automática de pontuação.
-          Ela serve como complemento didático ao material teórico e à
-          sequência didática presencial.
+          O tabuleiro de <strong>Go</strong> utiliza a biblioteca open-source
+          <a href="https://wgo.waltheri.net/" rel="noopener" target="_blank">WGo.js</a>
+          (licença MIT, de Jan Prokop), que renderiza o tabuleiro em canvas HTML5
+          com texturas realistas de madeira e pedras. O WGo.js implementa as
+          regras completas de captura, o impedimento de suicídio e a regra do
+          <em>ko</em>, tornando a experiência mais fiel ao jogo real. A contagem
+          de pontos ao final é uma aproximação simplificada — suficiente para uso
+          didático, mas sem a fase de marcação de território que ocorre numa
+          partida profissional.
         </p>
         <p>
           Para um treinamento mais avançado, o professor pode considerar
           plataformas dedicadas como
           <a href="https://online-go.com/" rel="noopener" target="_blank">Online-Go (OGS)</a>,
-          que oferece partidas completas com adversários humanos e
-          inteligência artificial, ou — para o Gomoku — qualquer dos vários
-          sites comunitários disponíveis. Estas plataformas, contudo,
-          dependem de cadastro e conexão estável; para uso em sala, a
-          versão local desta página é suficiente.
+          que oferece partidas completas com adversários humanos e inteligência
+          artificial, ou — para o Gomoku — qualquer dos vários sites comunitários
+          disponíveis. Estas plataformas, contudo, dependem de cadastro e conexão
+          estável; para uso em sala, a versão local desta página é suficiente.
         </p>
       </div>
     </section>
@@ -232,6 +236,7 @@
         <div class="btn-row" style="justify-content: center;">
           <a class="btn btn--primary" href="go.html">Ver as regras do Go</a>
           <a class="btn btn--ghost" href="gomoku.html">Ver as regras do Gomoku</a>
+          <a class="btn btn--ghost" href="construcao-eva.html">Construa seu tabuleiro</a>
         </div>
       </div>
     </section>
@@ -240,7 +245,7 @@
   <footer class="site-footer" role="contentinfo">
     <div class="site-footer__grid">
       <div><h3>Sobre</h3><ul><li><a href="sobre.html">O projeto</a></li><li><a href="recursos.html#autores">Autores</a></li><li><a href="recursos.html#referencias">Referências</a></li></ul></div>
-      <div><h3>Conteúdo</h3><ul><li><a href="go.html">O Go</a></li><li><a href="gomoku.html">Gomoku Narabe</a></li><li><a href="sequencia-didatica.html">Sequência didática</a></li><li><a href="professores.html">Para professores</a></li></ul></div>
+      <div><h3>Conteúdo</h3><ul><li><a href="go.html">O Go</a></li><li><a href="gomoku.html">Gomoku Narabe</a></li><li><a href="sequencia-didatica.html">Sequência didática</a></li><li><a href="professores.html">Para professores</a></li><li><a href="construcao-eva.html">Construa seu tabuleiro</a></li></ul></div>
       <div><h3>Acessibilidade</h3><ul><li><a href="https://vlibras.gov.br" rel="noopener" target="_blank">VLibras</a></li><li><a href="https://www.w3.org/WAI/standards-guidelines/wcag/" rel="noopener" target="_blank">WCAG (W3C)</a></li></ul></div>
       <div><h3>Licença</h3><p style="margin: 0; font-size: 0.9rem;">Conteúdo educativo sob <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br" rel="noopener" target="_blank">CC BY-SA 4.0</a>.</p></div>
     </div>
@@ -253,33 +258,29 @@
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
   <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
   <script src="assets/js/main.js"></script>
+
   <script>
     // ============================================================
-    // BoardGame: classe genérica para Go e Gomoku
-    // - SVG-based, sem dependências externas
-    // - Tabuleiros 9x9, mas configurável
+    // Gomoku Narabe — implementação in-house em SVG (inalterada)
     // ============================================================
     (function () {
       'use strict';
 
       const SIZE = 9;
       const PADDING = 36;
-      const CELL = 36;       // espaçamento entre linhas
+      const CELL = 36;
       const STONE_R = 16;
       const VIEW = 360;
       const NS = 'http://www.w3.org/2000/svg';
-      const KOMI = 6.5;
 
       class BoardGame {
         constructor(opts) {
-          this.type = opts.type;              // 'go' | 'gomoku'
+          this.type = opts.type;
           this.svg = opts.svg;
           this.statusEl = opts.statusEl;
           this.turnLabel = opts.turnLabel;
           this.turnPreview = opts.turnPreview;
           this.movesEl = opts.movesEl;
-          this.capBlackEl = opts.capBlackEl;
-          this.capWhiteEl = opts.capWhiteEl;
           this.stonesG = this.svg.querySelector('.stones');
           this.overlayG = this.svg.querySelector('.overlay');
           this.reset();
@@ -289,9 +290,7 @@
         reset() {
           this.board = Array.from({ length: SIZE }, () => Array(SIZE).fill(0));
           this.history = [];
-          this.captures = { 1: 0, 2: 0 };
-          this.turn = 1; // 1 = pretas, 2 = brancas
-          this.passes = 0;
+          this.turn = 1;
           this.gameOver = false;
           this.lastMove = null;
           this.render();
@@ -320,8 +319,6 @@
           return {
             board: this.board.map(r => r.slice()),
             turn: this.turn,
-            captures: { ...this.captures },
-            passes: this.passes,
             gameOver: this.gameOver,
             lastMove: this.lastMove,
           };
@@ -330,8 +327,6 @@
         restore(s) {
           this.board = s.board.map(r => r.slice());
           this.turn = s.turn;
-          this.captures = { ...s.captures };
-          this.passes = s.passes;
           this.gameOver = s.gameOver;
           this.lastMove = s.lastMove;
           this.render();
@@ -348,39 +343,24 @@
           const before = this.snapshot();
           const me = this.turn;
           this.board[row][col] = me;
-          let captured = 0;
-
-          if (this.type === 'go') {
-            captured = this.tryCapturesAround(col, row);
-            // Suicide check
-            if (captured === 0 && !this.hasLiberty(col, row)) {
-              this.board[row][col] = 0;
-              this.flashError('Movimento ilegal: suicídio.');
-              return;
-            }
-            this.captures[me] += captured;
-          }
 
           this.lastMove = { col, row };
           this.history.push(before);
-          this.passes = 0;
 
-          if (this.type === 'gomoku') {
-            if (this.checkGomokuWin(col, row)) {
-              this.gameOver = true;
-              const winner = me === 1 ? 'Pretas' : 'Brancas';
-              this.setStatus(`${winner} venceram alinhando 5 peças!`, 'win');
-              this.render();
-              this.svg.classList.add('is-over');
-              return;
-            }
-            if (this.isBoardFull()) {
-              this.gameOver = true;
-              this.setStatus('Empate — tabuleiro cheio.', 'win');
-              this.render();
-              this.svg.classList.add('is-over');
-              return;
-            }
+          if (this.checkGomokuWin(col, row)) {
+            this.gameOver = true;
+            const winner = me === 1 ? 'Pretas' : 'Brancas';
+            this.setStatus(`${winner} venceram alinhando 5 peças!`, 'win');
+            this.render();
+            this.svg.classList.add('is-over');
+            return;
+          }
+          if (this.isBoardFull()) {
+            this.gameOver = true;
+            this.setStatus('Empate — tabuleiro cheio.', 'win');
+            this.render();
+            this.svg.classList.add('is-over');
+            return;
           }
 
           this.turn = me === 1 ? 2 : 1;
@@ -389,63 +369,6 @@
           this.setStatus(`É a vez de ${this.turn === 1 ? 'Pretas' : 'Brancas'}.`, '');
         }
 
-        // --- Lógica do Go ---
-        neighbors(c, r) {
-          const out = [];
-          if (c > 0) out.push([c - 1, r]);
-          if (c < SIZE - 1) out.push([c + 1, r]);
-          if (r > 0) out.push([c, r - 1]);
-          if (r < SIZE - 1) out.push([c, r + 1]);
-          return out;
-        }
-
-        getGroup(col, row) {
-          const color = this.board[row][col];
-          if (!color) return { stones: [], libs: 0 };
-          const visited = new Set();
-          const stones = [];
-          const libs = new Set();
-          const stack = [[col, row]];
-          while (stack.length) {
-            const [c, r] = stack.pop();
-            const k = `${c},${r}`;
-            if (visited.has(k)) continue;
-            visited.add(k);
-            stones.push([c, r]);
-            for (const [nc, nr] of this.neighbors(c, r)) {
-              if (this.board[nr][nc] === 0) libs.add(`${nc},${nr}`);
-              else if (this.board[nr][nc] === color && !visited.has(`${nc},${nr}`)) {
-                stack.push([nc, nr]);
-              }
-            }
-          }
-          return { stones, libs: libs.size };
-        }
-
-        hasLiberty(col, row) {
-          return this.getGroup(col, row).libs > 0;
-        }
-
-        tryCapturesAround(col, row) {
-          const me = this.board[row][col];
-          const opp = me === 1 ? 2 : 1;
-          let captured = 0;
-          const checked = new Set();
-          for (const [nc, nr] of this.neighbors(col, row)) {
-            if (this.board[nr][nc] !== opp) continue;
-            const k = `${nc},${nr}`;
-            if (checked.has(k)) continue;
-            const grp = this.getGroup(nc, nr);
-            grp.stones.forEach(([c2, r2]) => checked.add(`${c2},${r2}`));
-            if (grp.libs === 0) {
-              grp.stones.forEach(([c2, r2]) => { this.board[r2][c2] = 0; });
-              captured += grp.stones.length;
-            }
-          }
-          return captured;
-        }
-
-        // --- Lógica do Gomoku ---
         checkGomokuWin(col, row) {
           const color = this.board[row][col];
           const dirs = [[1, 0], [0, 1], [1, 1], [1, -1]];
@@ -469,81 +392,10 @@
         }
 
         isBoardFull() {
-          for (let r = 0; r < SIZE; r++) {
-            for (let c = 0; c < SIZE; c++) {
+          for (let r = 0; r < SIZE; r++)
+            for (let c = 0; c < SIZE; c++)
               if (this.board[r][c] === 0) return false;
-            }
-          }
           return true;
-        }
-
-        // --- Pass / scoring (Go) ---
-        pass() {
-          if (this.gameOver) return;
-          if (this.type !== 'go') return;
-          this.history.push(this.snapshot());
-          this.passes++;
-          this.lastMove = null;
-          if (this.passes >= 2) {
-            this.endGoGame();
-            return;
-          }
-          this.turn = this.turn === 1 ? 2 : 1;
-          this.render();
-          this.updateUI();
-          this.setStatus(`Passou. É a vez de ${this.turn === 1 ? 'Pretas' : 'Brancas'}.`, '');
-        }
-
-        endGoGame() {
-          this.gameOver = true;
-          const score = this.scoreGo();
-          let msg = `Fim de partida. Pretas: ${score.black} pts · Brancas: ${score.white} pts (komi ${KOMI}). `;
-          if (score.black > score.white) msg += 'Pretas vencem!';
-          else if (score.white > score.black) msg += 'Brancas vencem!';
-          else msg += 'Empate (raríssimo no Go).';
-          this.setStatus(msg, 'win');
-          this.svg.classList.add('is-over');
-        }
-
-        scoreGo() {
-          let blackStones = 0, whiteStones = 0;
-          for (let r = 0; r < SIZE; r++) {
-            for (let c = 0; c < SIZE; c++) {
-              if (this.board[r][c] === 1) blackStones++;
-              else if (this.board[r][c] === 2) whiteStones++;
-            }
-          }
-          const visited = Array.from({ length: SIZE }, () => Array(SIZE).fill(false));
-          let blackTerr = 0, whiteTerr = 0;
-          for (let r = 0; r < SIZE; r++) {
-            for (let c = 0; c < SIZE; c++) {
-              if (visited[r][c] || this.board[r][c] !== 0) continue;
-              const region = [];
-              const adjacents = new Set();
-              const stack = [[c, r]];
-              while (stack.length) {
-                const [cc, cr] = stack.pop();
-                if (visited[cr][cc]) continue;
-                visited[cr][cc] = true;
-                if (this.board[cr][cc] !== 0) {
-                  adjacents.add(this.board[cr][cc]);
-                  continue;
-                }
-                region.push([cc, cr]);
-                for (const [nc, nr] of this.neighbors(cc, cr)) {
-                  if (!visited[nr][nc]) stack.push([nc, nr]);
-                }
-              }
-              if (adjacents.size === 1) {
-                if (adjacents.has(1)) blackTerr += region.length;
-                else if (adjacents.has(2)) whiteTerr += region.length;
-              }
-            }
-          }
-          return {
-            black: blackStones + blackTerr,
-            white: whiteStones + whiteTerr + KOMI,
-          };
         }
 
         undo() {
@@ -553,9 +405,7 @@
           this.setStatus(`É a vez de ${this.turn === 1 ? 'Pretas' : 'Brancas'}.`, '');
         }
 
-        // --- Render ---
         render() {
-          // Stones
           while (this.stonesG.firstChild) this.stonesG.removeChild(this.stonesG.firstChild);
           for (let r = 0; r < SIZE; r++) {
             for (let c = 0; c < SIZE; c++) {
@@ -575,8 +425,6 @@
               this.stonesG.appendChild(stone);
             }
           }
-
-          // Last-move marker
           while (this.overlayG.firstChild) this.overlayG.removeChild(this.overlayG.firstChild);
           if (this.lastMove) {
             const { col, row } = this.lastMove;
@@ -599,8 +447,6 @@
             this.turnPreview.classList.add(this.turn === 1 ? 'game-stone-preview--black' : 'game-stone-preview--white');
           }
           if (this.movesEl) this.movesEl.textContent = this.history.length;
-          if (this.capBlackEl) this.capBlackEl.textContent = this.captures[1];
-          if (this.capWhiteEl) this.capWhiteEl.textContent = this.captures[2];
         }
 
         setStatus(text, state) {
@@ -613,17 +459,15 @@
           const prev = this.statusEl ? this.statusEl.textContent : '';
           this.setStatus(msg, 'error');
           setTimeout(() => {
-            if (!this.gameOver) {
+            if (!this.gameOver)
               this.setStatus(`É a vez de ${this.turn === 1 ? 'Pretas' : 'Brancas'}.`, '');
-            } else {
+            else
               this.setStatus(prev, 'win');
-            }
           }, 1500);
         }
       }
 
-      // Inicialização
-      function init() {
+      function initGomoku() {
         const games = {
           gomoku: new BoardGame({
             type: 'gomoku',
@@ -633,40 +477,318 @@
             turnPreview: document.getElementById('turn-preview-gomoku'),
             movesEl: document.getElementById('moves-gomoku'),
           }),
-          go: new BoardGame({
-            type: 'go',
-            svg: document.getElementById('board-go'),
-            statusEl: document.getElementById('status-go'),
-            turnLabel: document.getElementById('turn-label-go'),
-            turnPreview: document.getElementById('turn-preview-go'),
-            movesEl: document.getElementById('moves-go'),
-            capBlackEl: document.getElementById('cap-black-go'),
-            capWhiteEl: document.getElementById('cap-white-go'),
-          }),
         };
 
-        // Botões
-        document.querySelectorAll('button[data-action]').forEach(btn => {
+        document.querySelectorAll('button[data-action][data-game="gomoku"]').forEach(btn => {
           btn.addEventListener('click', () => {
             const game = games[btn.dataset.game];
             if (!game) return;
-            const action = btn.dataset.action;
-            if (action === 'restart') {
+            if (btn.dataset.action === 'restart') {
               game.svg.classList.remove('is-over');
               game.reset();
-            } else if (action === 'undo') {
+            } else if (btn.dataset.action === 'undo') {
               game.undo();
-            } else if (action === 'pass') {
-              game.pass();
             }
           });
         });
       }
 
       if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', initGomoku);
       } else {
-        init();
+        initGomoku();
+      }
+    })();
+  </script>
+
+  <script>
+    // ============================================================
+    // Go — via WGo.js (MIT, Jan Prokop — https://wgo.waltheri.net)
+    // WGo.Game: jogo com captura, suicídio e ko.
+    // WGo.Board: canvas com textura de madeira e pedras realistas.
+    // ============================================================
+    (function () {
+      'use strict';
+
+      var KOMI = 6.5;
+      var SIZE = 9;
+
+      var goGame    = null;   // WGo.Game
+      var goBoard   = null;   // WGo.Board
+      var goPasses  = 0;
+      var goOver    = false;
+      var goMoves   = 0;
+      var goLastX   = -1;
+      var goLastY   = -1;
+
+      // ── Marcador de última jogada ────────────────────────────
+      var lastMoveMarker = {
+        stone: {
+          draw: function (args, board) {
+            var xr = board.getX(args.x);
+            var yr = board.getY(args.y);
+            var r  = board.stoneRadius * 0.28;
+            this.beginPath();
+            this.arc(xr, yr, r, 0, 2 * Math.PI);
+            // Preta → marcador branco; branca → marcador preto
+            this.fillStyle = (args.c === WGo.B) ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.75)';
+            this.fill();
+          }
+        }
+      };
+
+      // ── Elementos de UI ─────────────────────────────────────
+      function $id(id) { return document.getElementById(id); }
+
+      function setStatus(text, state) {
+        var el = $id('status-go');
+        if (!el) return;
+        el.textContent = text;
+        el.dataset.state = state || '';
+      }
+
+      function flashError(msg) {
+        var savedText  = $id('status-go') ? $id('status-go').textContent : '';
+        var savedState = $id('status-go') ? $id('status-go').dataset.state : '';
+        setStatus(msg, 'error');
+        setTimeout(function () {
+          if (!goOver) {
+            setStatus('É a vez de ' + (goGame.turn === WGo.B ? 'Pretas' : 'Brancas') + '.', '');
+          } else {
+            setStatus(savedText, savedState);
+          }
+        }, 1800);
+      }
+
+      function updateUI() {
+        var turnName = (goGame.turn === WGo.B) ? 'Pretas' : 'Brancas';
+        var labelEl  = $id('turn-label-go');
+        var prevEl   = $id('turn-preview-go');
+        var movesEl  = $id('moves-go');
+        var capBkEl  = $id('cap-black-go');
+        var capWhEl  = $id('cap-white-go');
+
+        if (labelEl) labelEl.textContent = turnName;
+        if (prevEl) {
+          prevEl.classList.remove('game-stone-preview--black', 'game-stone-preview--white');
+          prevEl.classList.add(goGame.turn === WGo.B ? 'game-stone-preview--black' : 'game-stone-preview--white');
+        }
+        if (movesEl) movesEl.textContent = goMoves;
+        // capCount.black = pedras pretas capturadas (pela branca)
+        // capCount.white = pedras brancas capturadas (pela preta)
+        if (capBkEl) capBkEl.textContent = goGame.position.capCount.black;
+        if (capWhEl) capWhEl.textContent = goGame.position.capCount.white;
+      }
+
+      // ── Renderização do tabuleiro via WGo.Board ──────────────
+      function renderBoard() {
+        goBoard.removeAllObjects();
+        var pos = goGame.position;
+        for (var x = 0; x < SIZE; x++) {
+          for (var y = 0; y < SIZE; y++) {
+            var stone = pos.get(x, y);
+            if (stone === WGo.B || stone === WGo.W) {
+              goBoard.addObject({ x: x, y: y, c: stone });
+            }
+          }
+        }
+        // Última jogada
+        if (goLastX >= 0) {
+          var lastColor = goGame.position.get(goLastX, goLastY);
+          if (lastColor) {
+            goBoard.addObject({ x: goLastX, y: goLastY, c: lastColor, type: lastMoveMarker });
+          }
+        }
+      }
+
+      // ── Pontuação simplificada (área + prisioneiros) ─────────
+      function scoreGo() {
+        var pos       = goGame.position;
+        var blackPts  = 0;
+        var whitePts  = 0;
+
+        // Contar pedras vivas no tabuleiro
+        for (var x = 0; x < SIZE; x++) {
+          for (var y = 0; y < SIZE; y++) {
+            var s = pos.get(x, y);
+            if (s === WGo.B) blackPts++;
+            else if (s === WGo.W) whitePts++;
+          }
+        }
+
+        // Contar território (intersecções vazias cercadas por apenas uma cor)
+        var visited = new Uint8Array(SIZE * SIZE);
+
+        function neighbors(x, y) {
+          var nbrs = [];
+          if (x > 0)        nbrs.push([x - 1, y]);
+          if (x < SIZE - 1) nbrs.push([x + 1, y]);
+          if (y > 0)        nbrs.push([x, y - 1]);
+          if (y < SIZE - 1) nbrs.push([x, y + 1]);
+          return nbrs;
+        }
+
+        for (var sx = 0; sx < SIZE; sx++) {
+          for (var sy = 0; sy < SIZE; sy++) {
+            var idx = sx * SIZE + sy;
+            if (visited[idx] || pos.get(sx, sy) !== 0) continue;
+
+            var region   = [];
+            var borders  = {};   // cores adjacentes encontradas
+            var stack    = [[sx, sy]];
+
+            while (stack.length) {
+              var cell   = stack.pop();
+              var cx     = cell[0], cy = cell[1];
+              var cidx   = cx * SIZE + cy;
+              if (visited[cidx]) continue;
+              visited[cidx] = 1;
+
+              var cv = pos.get(cx, cy);
+              if (cv !== 0) {
+                borders[cv] = true;
+                continue;
+              }
+              region.push(cidx);
+              var nbrs = neighbors(cx, cy);
+              for (var n = 0; n < nbrs.length; n++) {
+                var ni = nbrs[n][0] * SIZE + nbrs[n][1];
+                if (!visited[ni]) stack.push(nbrs[n]);
+              }
+            }
+
+            var borderColors = Object.keys(borders);
+            if (borderColors.length === 1) {
+              if (Number(borderColors[0]) === WGo.B) blackPts += region.length;
+              else                                   whitePts += region.length;
+            }
+          }
+        }
+
+        return {
+          black: blackPts,
+          white: whitePts + KOMI,
+        };
+      }
+
+      // ── Encerramento da partida ──────────────────────────────
+      function endGoGame() {
+        goOver = true;
+        var sc  = scoreGo();
+        var msg = 'Fim de partida. Pretas: ' + sc.black + ' pts · Brancas: ' + sc.white + ' pts (komi ' + KOMI + '). ';
+        if (sc.black > sc.white)      msg += 'Pretas vencem!';
+        else if (sc.white > sc.black) msg += 'Brancas vencem!';
+        else                          msg += 'Empate (raríssimo no Go).';
+        setStatus(msg, 'win');
+        var wrap = $id('board-go-wgo');
+        if (wrap) wrap.style.opacity = '0.9';
+        renderBoard();
+        updateUI();
+      }
+
+      // ── Passagem de vez ──────────────────────────────────────
+      function goPass() {
+        if (goOver) return;
+        goGame.pass();
+        goLastX = goLastY = -1;
+        goMoves++;
+        goPasses++;
+        if (goPasses >= 2) { endGoGame(); return; }
+        renderBoard();
+        updateUI();
+        setStatus('Passou. É a vez de ' + (goGame.turn === WGo.B ? 'Pretas' : 'Brancas') + '.', '');
+      }
+
+      // ── Desfazer ─────────────────────────────────────────────
+      function goUndo() {
+        if (goGame.stack.length <= 1) return;
+        goGame.popPosition();
+        goOver   = false;
+        goPasses = Math.max(0, goPasses - 1);
+        goMoves  = Math.max(0, goMoves - 1);
+        goLastX  = goLastY = -1;
+        var wrap = $id('board-go-wgo');
+        if (wrap) wrap.style.opacity = '';
+        renderBoard();
+        updateUI();
+        setStatus('É a vez de ' + (goGame.turn === WGo.B ? 'Pretas' : 'Brancas') + '.', '');
+      }
+
+      // ── Inicialização / reinício ─────────────────────────────
+      function initGo() {
+        goGame   = new WGo.Game(SIZE);
+        goPasses = 0;
+        goOver   = false;
+        goMoves  = 0;
+        goLastX  = goLastY = -1;
+
+        var el = $id('board-go-wgo');
+        if (!el) return;
+
+        el.style.opacity = '';
+
+        // Calcular tamanho quadrado a partir da largura disponível
+        var boardPx = el.offsetWidth || 360;
+        el.style.height = boardPx + 'px';
+
+        if (!goBoard) {
+          // Primeira inicialização: criar o WGo.Board
+          goBoard = new WGo.Board(el, {
+            width: boardPx,
+            size:  SIZE,
+          });
+
+          // Listener de clique (registrado apenas uma vez)
+          goBoard.addEventListener('click', function (x, y) {
+            if (goOver) return;
+            var result = goGame.play(x, y);
+
+            if (Array.isArray(result)) {
+              // Jogada válida
+              goLastX  = x;
+              goLastY  = y;
+              goPasses = 0;
+              goMoves++;
+              renderBoard();
+              updateUI();
+              setStatus('É a vez de ' + (goGame.turn === WGo.B ? 'Pretas' : 'Brancas') + '.', '');
+            } else {
+              // Jogada inválida — mostrar motivo
+              switch (result) {
+                case 2: flashError('Posição já ocupada.'); break;
+                case 3: flashError('Movimento ilegal: suicídio.'); break;
+                case 4: flashError('Movimento ilegal: ko.'); break;
+                default: flashError('Jogada inválida.'); break;
+              }
+            }
+          });
+        } else {
+          // Reinício: apenas limpar os objetos do tabuleiro
+          goBoard.removeAllObjects();
+        }
+
+        updateUI();
+        setStatus('É a vez de Pretas.', '');
+      }
+
+      // ── Botões ───────────────────────────────────────────────
+      function bindGoButtons() {
+        document.querySelectorAll('button[data-action][data-game="go"]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var action = btn.dataset.action;
+            if (action === 'restart') { initGo(); }
+            else if (action === 'undo')    { goUndo(); }
+            else if (action === 'pass')    { goPass(); }
+          });
+        });
+      }
+
+      // ── Bootstrap ────────────────────────────────────────────
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () { initGo(); bindGoButtons(); });
+      } else {
+        initGo();
+        bindGoButtons();
       }
     })();
   </script>
