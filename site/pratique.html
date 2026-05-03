@@ -76,15 +76,13 @@
         <h1>Tabuleiros para jogar diretamente no navegador</h1>
         <p class="lead">
           Aqui você pode experimentar o Gomoku Narabe e o Go em tabuleiros 9×9
-          jogáveis diretamente no navegador, com mecânicas suficientes para
+          diretamente no navegador, com mecânicas suficientes para
           uma partida completa entre dois jogadores no mesmo dispositivo.
         </p>
         <p>
-          Os jogos rodam totalmente no seu computador ou celular — não há
-          servidor, não há cadastro, não há rastreamento. Use os controles
+          Os jogos rodam totalmente no seu dispositivo. Use os controles
           ao lado de cada tabuleiro para reiniciar a partida, desfazer a
-          última jogada, ou (no Go) passar a vez. Toques na tela e cliques
-          do mouse funcionam igualmente.
+          última jogada, ou (no Go) passar a vez.
         </p>
       </div>
     </section>
@@ -151,12 +149,6 @@
             quem somar mais território cercado e pedras vivas (mais 6,5
             pontos de <em>komi</em> para brancas).
           </p>
-          <p style="font-size: 0.9rem; color: var(--color-muted);">
-            <strong>Versão completa:</strong> esta implementação utiliza a
-            biblioteca <a href="https://wgo.waltheri.net/" rel="noopener" target="_blank">WGo.js</a>
-            e aplica as regras de captura, impedimento de suicídio e a regra
-            do <em>ko</em>. Ideal para experimentar a dinâmica do jogo em sala.
-          </p>
         </div>
 
         <div class="game">
@@ -200,24 +192,7 @@
 
     <section class="section section--alt">
       <div class="container container--narrow prose">
-        <h2>Sobre estas versões</h2>
-        <p>
-          O <strong>Gomoku Narabe</strong> foi implementado em JavaScript puro,
-          sem dependências externas, para que funcione mesmo em conexões instáveis
-          e respeite a privacidade do estudante. O tabuleiro é renderizado em SVG
-          (acessível, escalável) e responde a clique e toque.
-        </p>
-        <p>
-          O tabuleiro de <strong>Go</strong> utiliza a biblioteca open-source
-          <a href="https://wgo.waltheri.net/" rel="noopener" target="_blank">WGo.js</a>
-          (licença MIT, de Jan Prokop), que renderiza o tabuleiro em canvas HTML5
-          com texturas realistas de madeira e pedras. O WGo.js implementa as
-          regras completas de captura, o impedimento de suicídio e a regra do
-          <em>ko</em>, tornando a experiência mais fiel ao jogo real. A contagem
-          de pontos ao final é uma aproximação simplificada — suficiente para uso
-          didático, mas sem a fase de marcação de território que ocorre numa
-          partida profissional.
-        </p>
+        <h2>Construindo conhecimento</h2>
         <p>
           Para um treinamento mais avançado, o professor pode considerar
           plataformas dedicadas como
